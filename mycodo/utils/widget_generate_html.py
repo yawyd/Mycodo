@@ -1,3 +1,5 @@
+from mycodo.utils.widgets import parse_widget_information
+from mycodo.config import PATH_HTML_USER
 import grp
 import logging
 import pwd
@@ -5,15 +7,16 @@ import pwd
 import os
 import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.realpath(__file__), '../../..')))
+sys.path.append(os.path.abspath(os.path.join(
+    os.path.realpath(__file__), '../../..')))
 
-from mycodo.config import PATH_HTML_USER
-from mycodo.utils.widgets import parse_widget_information
 
 logger = logging.getLogger("mycodo.utils.widget_generate_html")
 
 
 def set_user_grp(filepath, user, group):
+    print('skipping set user & group')
+    return
     """Set the UID and GUID of a file."""
     uid = pwd.getpwnam(user).pw_uid
     gid = grp.getgrnam(group).gr_gid
@@ -25,7 +28,7 @@ def assure_path_exists(path):
     if not os.path.exists(path):
         os.makedirs(path)
         os.chmod(path, 0o774)
-        set_user_grp(path, 'mycodo', 'mycodo')
+        # set_user_grp(path, 'mycodo', 'mycodo')
     return path
 
 
@@ -47,7 +50,8 @@ def generate_widget_html():
                 fw.close()
             set_user_grp(path_head, 'mycodo', 'mycodo')
 
-            filename_title_bar = "widget_template_{}_title_bar.html".format(widget_name)
+            filename_title_bar = "widget_template_{}_title_bar.html".format(
+                widget_name)
             path_title_bar = os.path.join(PATH_HTML_USER, filename_title_bar)
             with open(path_title_bar, 'w') as fw:
                 if 'widget_dashboard_title_bar' in dict_widgets[widget_name]:
@@ -69,8 +73,10 @@ def generate_widget_html():
                 fw.close()
             set_user_grp(path_body, 'mycodo', 'mycodo')
 
-            filename_configure_options = "widget_template_{}_configure_options.html".format(widget_name)
-            path_configure_options = os.path.join(PATH_HTML_USER, filename_configure_options)
+            filename_configure_options = "widget_template_{}_configure_options.html".format(
+                widget_name)
+            path_configure_options = os.path.join(
+                PATH_HTML_USER, filename_configure_options)
             with open(path_configure_options, 'w') as fw:
                 if 'widget_dashboard_configure_options' in dict_widgets[widget_name]:
                     html_configure_options = dict_widgets[widget_name]['widget_dashboard_configure_options']
@@ -91,7 +97,8 @@ def generate_widget_html():
                 fw.close()
             set_user_grp(path_js, 'mycodo', 'mycodo')
 
-            filename_js_ready = "widget_template_{}_js_ready.html".format(widget_name)
+            filename_js_ready = "widget_template_{}_js_ready.html".format(
+                widget_name)
             path_js_ready = os.path.join(PATH_HTML_USER, filename_js_ready)
             with open(path_js_ready, 'w') as fw:
                 if 'widget_dashboard_js_ready' in dict_widgets[widget_name]:
@@ -102,8 +109,10 @@ def generate_widget_html():
                 fw.close()
             set_user_grp(path_js_ready, 'mycodo', 'mycodo')
 
-            filename_js_ready_end = "widget_template_{}_js_ready_end.html".format(widget_name)
-            path_js_ready_end = os.path.join(PATH_HTML_USER, filename_js_ready_end)
+            filename_js_ready_end = "widget_template_{}_js_ready_end.html".format(
+                widget_name)
+            path_js_ready_end = os.path.join(
+                PATH_HTML_USER, filename_js_ready_end)
             with open(path_js_ready_end, 'w') as fw:
                 if 'widget_dashboard_js_ready_end' in dict_widgets[widget_name]:
                     html_js_ready_end = dict_widgets[widget_name]['widget_dashboard_js_ready_end']
@@ -113,7 +122,8 @@ def generate_widget_html():
                 fw.close()
             set_user_grp(path_js_ready_end, 'mycodo', 'mycodo')
         except Exception:
-            logger.exception("Generating widget HTML for widget: {}".format(widget_name))
+            logger.exception(
+                "Generating widget HTML for widget: {}".format(widget_name))
 
 
 if __name__ == "__main__":

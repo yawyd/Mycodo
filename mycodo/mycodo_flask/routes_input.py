@@ -397,20 +397,14 @@ def page_input():
 
     # Add 1-wire devices from ow-shell (if installed)
     devices_1wire_ow_shell = []
-    if current_app.config['TESTING']:
-        logger.debug("Testing: Skipping testing for 'ow-shell'")
-    elif not dpkg_package_exists('ow-shell'):
-        logger.debug("Package 'ow-shell' not found")
-    else:
-        logger.debug("Package 'ow-shell' found")
-        try:
-            test_cmd = subprocess.check_output(['owdir']).splitlines()
-            for each_ow in test_cmd:
-                str_ow = re.sub("\ |\/|\'", "", each_ow.decode("utf-8"))  # Strip / and '
-                if '.' in str_ow and len(str_ow) == 15:
-                    devices_1wire_ow_shell.append(str_ow)
-        except Exception:
-            logger.error("Error finding 1-wire devices with 'owdir'")
+    try:
+        test_cmd = subprocess.check_output(['owdir']).splitlines()
+        for each_ow in test_cmd:
+            str_ow = re.sub("\ |\/|\'", "", each_ow.decode("utf-8"))  # Strip / and '
+            if '.' in str_ow and len(str_ow) == 15:
+                devices_1wire_ow_shell.append(str_ow)
+    except Exception as e:
+        logger.error("Error finding 1-wire devices with 'owdir', {}".format(e))
 
     # Find FTDI devices
     ftdi_devices = []

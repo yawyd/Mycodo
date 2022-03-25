@@ -53,7 +53,7 @@ This function acquires the past measurements (within Max Age) for the selected m
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Measurement to replace "x" in the equation
 
 ##### Max Age
@@ -151,7 +151,7 @@ This function will use rsync to back up assets on this system to a remote system
 - Default Value: 22
 - Description: Specify a nonstandard SSH port
 
-#### Actions
+#### Commands
 
 ##### Backup of settings are only created if the Mycodo version or database versions change. This is due to this Function running periodically- if it created a new backup every Period, there would soon be many identical backups. Therefore, if you want to induce the backup of settings, measurements, or camera directories and sync them to your remote system, use the buttons below.
 
@@ -174,11 +174,13 @@ A simple bang-bang control for controlling one output from one input. Select an 
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Select a measurement the selected output will affect
 
 ##### Output
 
+- Type: Select Device, Measurement, and Channel
+- Selections: Output
 - Description: Select an output to control that will affect the measurement
 
 ##### Setpoint
@@ -208,22 +210,26 @@ A simple bang-bang control for controlling one output from one input. Select an 
 ### Bang-Bang Hysteretic (On/Off) (Raise/Lower/Both)
 
 
-A simple bang-bang control for controlling one output from one input. Select an input, an output, enter a setpoint and a hysteresis, and select a direction. The output will turn on when the input is below (lower = setpoint - hysteresis) and turn off when the input is above (higher = setpoint + hysteresis). This is the behavior when Raise is selected, such as when heating. Lower direction has the opposite behavior - it will try to turn the output on in order to drive the input lower. The Both option will raise and lower.
+A simple bang-bang control for controlling one or two outputs from one input. Select an input, a raise and/or lower output, enter a setpoint and a hysteresis, and select a direction. The output will turn on when the input is below (lower = setpoint - hysteresis) and turn off when the input is above (higher = setpoint + hysteresis). This is the behavior when Raise is selected, such as when heating. Lower direction has the opposite behavior - it will try to turn the output on in order to drive the input lower. The Both option will raise and lower. Note: This output will only work with On/Off Outputs.
 
 #### Options
 
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Select a measurement the selected output will affect
 
 ##### Output (Raise)
 
+- Type: Select Device, Measurement, and Channel
+- Selections: Output
 - Description: Select an output to control that will raise the measurement
 
 ##### Output (Lower)
 
+- Type: Select Device, Measurement, and Channel
+- Selections: Output
 - Description: Select an output to control that will lower the measurement
 
 ##### Setpoint
@@ -253,18 +259,20 @@ A simple bang-bang control for controlling one output from one input. Select an 
 ### Bang-Bang Hysteretic (PWM) (Raise/Lower/Both)
 
 
-A simple bang-bang control for controlling one PWM output from one input. Select an input, a PWM output, enter a setpoint and a hysteresis, and select a direction. The output will turn on when the input is below below (lower = setpoint - hysteresis) and turn off when the input is above (higher = setpoint + hysteresis). This is the behavior when Raise is selected, such as when heating. Lower direction has the opposite behavior - it will try to turn the output on in order to drive the input lower. The Both option will raise and lower.
+A simple bang-bang control for controlling one PWM output from one input. Select an input, a PWM output, enter a setpoint and a hysteresis, and select a direction. The output will turn on when the input is below below (lower = setpoint - hysteresis) and turn off when the input is above (higher = setpoint + hysteresis). This is the behavior when Raise is selected, such as when heating. Lower direction has the opposite behavior - it will try to turn the output on in order to drive the input lower. The Both option will raise and lower. Note: This output will only work with PWM Outputs.
 
 #### Options
 
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Select a measurement the selected output will affect
 
 ##### Output
 
+- Type: Select Device, Measurement, and Channel
+- Selections: Output
 - Description: Select an output to control that will affect the measurement
 
 ##### Setpoint
@@ -330,7 +338,7 @@ This function acquires 2 measurements, calculates the difference, and stores the
 ##### Measurement A
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: 
 
 ##### Measurement A Max Age
@@ -342,7 +350,7 @@ This function acquires 2 measurements, calculates the difference, and stores the
 ##### Measurement B
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: 
 
 ##### Measurement B Max Age
@@ -402,7 +410,7 @@ This Function outputs to a generic 16x2 LCD display via I2C. Since this display 
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, Output, PID, 
+- Selections: Input, Math, Function, Output, PID
 - Description: Measurement to display on the line
 
 ##### Measurement Max Age
@@ -410,6 +418,11 @@ This Function outputs to a generic 16x2 LCD display via I2C. Since this display 
 - Type: Decimal
 - Default Value: 360
 - Description: The maximum age (seconds) of the measurement to use
+
+##### Measurement Label
+
+- Type: Text
+- Description: Set to overwrite the default measurement label
 
 ##### Measurement Decimal
 
@@ -423,6 +436,26 @@ This Function outputs to a generic 16x2 LCD display via I2C. Since this display 
 - Default Value: Text
 - Description: Text to display
 
+##### Display Unit
+
+- Type: Boolean
+- Default Value: True
+- Description: Display the measurement unit (if available)
+
+#### Commands
+
+##### Backlight On
+
+- Type: Button
+##### Backlight Off
+
+- Type: Button
+##### Backlight Flashing On
+
+- Type: Button
+##### Backlight Flashing Off
+
+- Type: Button
 ### Display: Generic LCD 20x4 (I2C)
 
 
@@ -464,7 +497,7 @@ This Function outputs to a generic 20x4 LCD display via I2C. Since this display 
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, Output, PID, 
+- Selections: Input, Math, Function, Output, PID
 - Description: Measurement to display on the line
 
 ##### Max Age
@@ -472,6 +505,11 @@ This Function outputs to a generic 20x4 LCD display via I2C. Since this display 
 - Type: Decimal
 - Default Value: 360
 - Description: The maximum age (seconds) of the measurement to use
+
+##### Measurement Label
+
+- Type: Text
+- Description: Set to overwrite the default measurement label
 
 ##### Measurement Decimal
 
@@ -485,6 +523,20 @@ This Function outputs to a generic 20x4 LCD display via I2C. Since this display 
 - Default Value: Text
 - Description: Text to display
 
+##### Display Unit
+
+- Type: Boolean
+- Default Value: True
+- Description: Display the measurement unit (if available)
+
+#### Commands
+
+##### Backlight On
+
+- Type: Button
+##### Backlight Off
+
+- Type: Button
 ### Display: Grove LCD 16x2 (I2C)
 
 
@@ -550,7 +602,7 @@ This Function outputs to the Grove 16x2 LCD display via I2C. Since this display 
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, Output, PID, 
+- Selections: Input, Math, Function, Output, PID
 - Description: Measurement to display on the line
 
 ##### Max Age
@@ -558,6 +610,11 @@ This Function outputs to the Grove 16x2 LCD display via I2C. Since this display 
 - Type: Decimal
 - Default Value: 360
 - Description: The maximum age (seconds) of the measurement to use
+
+##### Measurement Label
+
+- Type: Text
+- Description: Set to overwrite the default measurement label
 
 ##### Measurement Decimal
 
@@ -571,9 +628,32 @@ This Function outputs to the Grove 16x2 LCD display via I2C. Since this display 
 - Default Value: Text
 - Description: Text to display
 
+##### Display Unit
+
+- Type: Boolean
+- Default Value: True
+- Description: Display the measurement unit (if available)
+
+#### Commands
+
+##### Backlight On
+
+- Type: Button
+##### Backlight Off
+
+- Type: Button
+##### Color (RGB)
+
+- Type: Text
+- Default Value: 255,0,0
+- Description: Color as R,G,B values (e.g. "255,0,0" without quotes)
+
+##### Set Backlight Color
+
+- Type: Button
 ### Display: SSD1306 OLED 128x32 [2 Lines] (I2C)
 
-- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [adafruit-extended-bus](https://pypi.org/project/adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [Adafruit-Circuitpython-SSD1306](https://pypi.org/project/Adafruit-Circuitpython-SSD1306)
+- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [Adafruit-extended-bus](https://pypi.org/project/Adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [adafruit-circuitpython-ssd1306](https://pypi.org/project/adafruit-circuitpython-ssd1306)
 
 This Function outputs to a 128x32 SSD1306 OLED display via I2C. This display Function will show 2 lines at a time, so channels are added in sets of 2 when Number of Line Sets is modified. Every Period, the LCD will refresh and display the next set of lines. Therefore, the first set of lines that are displayed are channels 0 - 1, then 2 - 3, and so on. After all channels have been displayed, it will cycle back to the beginning.
 
@@ -642,7 +722,7 @@ This Function outputs to a 128x32 SSD1306 OLED display via I2C. This display Fun
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, Output, PID, 
+- Selections: Input, Math, Function, Output, PID
 - Description: Measurement to display on the line
 
 ##### Max Age
@@ -650,6 +730,11 @@ This Function outputs to a 128x32 SSD1306 OLED display via I2C. This display Fun
 - Type: Decimal
 - Default Value: 360
 - Description: The maximum age (seconds) of the measurement to use
+
+##### Measurement Label
+
+- Type: Text
+- Description: Set to overwrite the default measurement label
 
 ##### Measurement Decimal
 
@@ -671,7 +756,7 @@ This Function outputs to a 128x32 SSD1306 OLED display via I2C. This display Fun
 
 ### Display: SSD1306 OLED 128x32 [2 Lines] (SPI)
 
-- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [Adafruit-GPIO](https://pypi.org/project/Adafruit-GPIO), [adafruit-extended-bus](https://pypi.org/project/adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [Adafruit-Circuitpython-SSD1306](https://pypi.org/project/Adafruit-Circuitpython-SSD1306)
+- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [Adafruit-GPIO](https://pypi.org/project/Adafruit-GPIO), [Adafruit-extended-bus](https://pypi.org/project/Adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [adafruit-circuitpython-ssd1306](https://pypi.org/project/adafruit-circuitpython-ssd1306)
 
 This Function outputs to a 128x32 SSD1306 OLED display via SPI. This display Function will show 2 lines at a time, so channels are added in sets of 2 when Number of Line Sets is modified. Every Period, the LCD will refresh and display the next set of lines. Therefore, the first set of lines that are displayed are channels 0 - 1, then 2 - 3, and so on. After all channels have been displayed, it will cycle back to the beginning.
 
@@ -750,7 +835,7 @@ This Function outputs to a 128x32 SSD1306 OLED display via SPI. This display Fun
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, Output, PID, 
+- Selections: Input, Math, Function, Output, PID
 - Description: Measurement to display on the line
 
 ##### Max Age
@@ -758,6 +843,11 @@ This Function outputs to a 128x32 SSD1306 OLED display via SPI. This display Fun
 - Type: Decimal
 - Default Value: 360
 - Description: The maximum age (seconds) of the measurement to use
+
+##### Measurement Label
+
+- Type: Text
+- Description: Set to overwrite the default measurement label
 
 ##### Measurement Decimal
 
@@ -779,7 +869,7 @@ This Function outputs to a 128x32 SSD1306 OLED display via SPI. This display Fun
 
 ### Display: SSD1306 OLED 128x32 [4 Lines] (I2C)
 
-- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [adafruit-extended-bus](https://pypi.org/project/adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [Adafruit-Circuitpython-SSD1306](https://pypi.org/project/Adafruit-Circuitpython-SSD1306)
+- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [Adafruit-extended-bus](https://pypi.org/project/Adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [adafruit-circuitpython-ssd1306](https://pypi.org/project/adafruit-circuitpython-ssd1306)
 
 This Function outputs to a 128x32 SSD1306 OLED display via I2C. This display Function will show 4 lines at a time, so channels are added in sets of 4 when Number of Line Sets is modified. Every Period, the LCD will refresh and display the next set of lines. Therefore, the first set of lines that are displayed are channels 0 - 3, then 4 - 7, and so on. After all channels have been displayed, it will cycle back to the beginning.
 
@@ -848,7 +938,7 @@ This Function outputs to a 128x32 SSD1306 OLED display via I2C. This display Fun
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, Output, PID, 
+- Selections: Input, Math, Function, Output, PID
 - Description: Measurement to display on the line
 
 ##### Max Age
@@ -856,6 +946,11 @@ This Function outputs to a 128x32 SSD1306 OLED display via I2C. This display Fun
 - Type: Decimal
 - Default Value: 360
 - Description: The maximum age (seconds) of the measurement to use
+
+##### Measurement Label
+
+- Type: Text
+- Description: Set to overwrite the default measurement label
 
 ##### Measurement Decimal
 
@@ -877,7 +972,7 @@ This Function outputs to a 128x32 SSD1306 OLED display via I2C. This display Fun
 
 ### Display: SSD1306 OLED 128x32 [4 Lines] (SPI)
 
-- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [Adafruit-GPIO](https://pypi.org/project/Adafruit-GPIO), [adafruit-extended-bus](https://pypi.org/project/adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [Adafruit-Circuitpython-SSD1306](https://pypi.org/project/Adafruit-Circuitpython-SSD1306)
+- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [Adafruit-GPIO](https://pypi.org/project/Adafruit-GPIO), [Adafruit-extended-bus](https://pypi.org/project/Adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [adafruit-circuitpython-ssd1306](https://pypi.org/project/adafruit-circuitpython-ssd1306)
 
 This Function outputs to a 128x32 SSD1306 OLED display via SPI. This display Function will show 4 lines at a time, so channels are added in sets of 4 when Number of Line Sets is modified. Every Period, the LCD will refresh and display the next set of lines. Therefore, the first set of lines that are displayed are channels 0 - 3, then 4 - 7, and so on. After all channels have been displayed, it will cycle back to the beginning.
 
@@ -962,7 +1057,7 @@ This Function outputs to a 128x32 SSD1306 OLED display via SPI. This display Fun
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, Output, PID, 
+- Selections: Input, Math, Function, Output, PID
 - Description: Measurement to display on the line
 
 ##### Max Age
@@ -970,6 +1065,11 @@ This Function outputs to a 128x32 SSD1306 OLED display via SPI. This display Fun
 - Type: Decimal
 - Default Value: 360
 - Description: The maximum age (seconds) of the measurement to use
+
+##### Measurement Label
+
+- Type: Text
+- Description: Set to overwrite the default measurement label
 
 ##### Measurement Decimal
 
@@ -991,7 +1091,7 @@ This Function outputs to a 128x32 SSD1306 OLED display via SPI. This display Fun
 
 ### Display: SSD1306 OLED 128x64 [4 Lines] (I2C)
 
-- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [adafruit-extended-bus](https://pypi.org/project/adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [Adafruit-Circuitpython-SSD1306](https://pypi.org/project/Adafruit-Circuitpython-SSD1306)
+- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [Adafruit-extended-bus](https://pypi.org/project/Adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [adafruit-circuitpython-ssd1306](https://pypi.org/project/adafruit-circuitpython-ssd1306)
 
 This Function outputs to a 128x64 SSD1306 OLED display via I2C. This display Function will show 4 lines at a time, so channels are added in sets of 4 when Number of Line Sets is modified. Every Period, the LCD will refresh and display the next set of lines. Therefore, the first set of lines that are displayed are channels 0 - 3, then 4 - 7, and so on. After all channels have been displayed, it will cycle back to the beginning.
 
@@ -1060,7 +1160,7 @@ This Function outputs to a 128x64 SSD1306 OLED display via I2C. This display Fun
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, Output, PID, 
+- Selections: Input, Math, Function, Output, PID
 - Description: Measurement to display on the line
 
 ##### Max Age
@@ -1068,6 +1168,11 @@ This Function outputs to a 128x64 SSD1306 OLED display via I2C. This display Fun
 - Type: Decimal
 - Default Value: 360
 - Description: The maximum age (seconds) of the measurement to use
+
+##### Measurement Label
+
+- Type: Text
+- Description: Set to overwrite the default measurement label
 
 ##### Measurement Decimal
 
@@ -1089,7 +1194,7 @@ This Function outputs to a 128x64 SSD1306 OLED display via I2C. This display Fun
 
 ### Display: SSD1306 OLED 128x64 [4 Lines] (SPI)
 
-- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [Adafruit-GPIO](https://pypi.org/project/Adafruit-GPIO), [adafruit-extended-bus](https://pypi.org/project/adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [Adafruit-Circuitpython-SSD1306](https://pypi.org/project/Adafruit-Circuitpython-SSD1306)
+- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [Adafruit-GPIO](https://pypi.org/project/Adafruit-GPIO), [Adafruit-extended-bus](https://pypi.org/project/Adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [adafruit-circuitpython-ssd1306](https://pypi.org/project/adafruit-circuitpython-ssd1306)
 
 This Function outputs to a 128x64 SSD1306 OLED display via SPI. This display Function will show 4 lines at a time, so channels are added in sets of 4 when Number of Line Sets is modified. Every Period, the LCD will refresh and display the next set of lines. Therefore, the first set of lines that are displayed are channels 0 - 3, then 4 - 7, and so on. After all channels have been displayed, it will cycle back to the beginning.
 
@@ -1168,7 +1273,7 @@ This Function outputs to a 128x64 SSD1306 OLED display via SPI. This display Fun
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, Output, PID, 
+- Selections: Input, Math, Function, Output, PID
 - Description: Measurement to display on the line
 
 ##### Max Age
@@ -1176,6 +1281,11 @@ This Function outputs to a 128x64 SSD1306 OLED display via SPI. This display Fun
 - Type: Decimal
 - Default Value: 360
 - Description: The maximum age (seconds) of the measurement to use
+
+##### Measurement Label
+
+- Type: Text
+- Description: Set to overwrite the default measurement label
 
 ##### Measurement Decimal
 
@@ -1197,7 +1307,7 @@ This Function outputs to a 128x64 SSD1306 OLED display via SPI. This display Fun
 
 ### Display: SSD1306 OLED 128x64 [8 Lines] (I2C)
 
-- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [adafruit-extended-bus](https://pypi.org/project/adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [Adafruit-Circuitpython-SSD1306](https://pypi.org/project/Adafruit-Circuitpython-SSD1306)
+- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [Adafruit-extended-bus](https://pypi.org/project/Adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [adafruit-circuitpython-ssd1306](https://pypi.org/project/adafruit-circuitpython-ssd1306)
 
 This Function outputs to a 128x64 SSD1306 OLED display via I2C. This display Function will show 8 lines at a time, so channels are added in sets of 8 when Number of Line Sets is modified. Every Period, the LCD will refresh and display the next set of lines. Therefore, the first set of lines that are displayed are channels 0 - 7, then 8 - 15, and so on. After all channels have been displayed, it will cycle back to the beginning.
 
@@ -1266,7 +1376,7 @@ This Function outputs to a 128x64 SSD1306 OLED display via I2C. This display Fun
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, Output, PID, 
+- Selections: Input, Math, Function, Output, PID
 - Description: Measurement to display on the line
 
 ##### Max Age
@@ -1274,6 +1384,11 @@ This Function outputs to a 128x64 SSD1306 OLED display via I2C. This display Fun
 - Type: Decimal
 - Default Value: 360
 - Description: The maximum age (seconds) of the measurement to use
+
+##### Measurement Label
+
+- Type: Text
+- Description: Set to overwrite the default measurement label
 
 ##### Measurement Decimal
 
@@ -1295,7 +1410,7 @@ This Function outputs to a 128x64 SSD1306 OLED display via I2C. This display Fun
 
 ### Display: SSD1306 OLED 128x64 [8 Lines] (SPI)
 
-- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [Adafruit-GPIO](https://pypi.org/project/Adafruit-GPIO), [adafruit-extended-bus](https://pypi.org/project/adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [Adafruit-Circuitpython-SSD1306](https://pypi.org/project/Adafruit-Circuitpython-SSD1306)
+- Dependencies: [libjpeg-dev](https://packages.debian.org/buster/libjpeg-dev), [Pillow](https://pypi.org/project/Pillow), [pyusb](https://pypi.org/project/pyusb), [Adafruit-GPIO](https://pypi.org/project/Adafruit-GPIO), [Adafruit-extended-bus](https://pypi.org/project/Adafruit-extended-bus), [adafruit-circuitpython-framebuf](https://pypi.org/project/adafruit-circuitpython-framebuf), [adafruit-circuitpython-ssd1306](https://pypi.org/project/adafruit-circuitpython-ssd1306)
 
 This Function outputs to a 128x64 SSD1306 OLED display via SPI. This display Function will show 8 lines at a time, so channels are added in sets of 8 when Number of Line Sets is modified. Every Period, the LCD will refresh and display the next set of lines. Therefore, the first set of lines that are displayed are channels 0 - 7, then 8 - 15, and so on. After all channels have been displayed, it will cycle back to the beginning.
 
@@ -1374,7 +1489,7 @@ This Function outputs to a 128x64 SSD1306 OLED display via SPI. This display Fun
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, Output, PID, 
+- Selections: Input, Math, Function, Output, PID
 - Description: Measurement to display on the line
 
 ##### Max Age
@@ -1382,6 +1497,11 @@ This Function outputs to a 128x64 SSD1306 OLED display via SPI. This display Fun
 - Type: Decimal
 - Default Value: 360
 - Description: The maximum age (seconds) of the measurement to use
+
+##### Measurement Label
+
+- Type: Text
+- Description: Set to overwrite the default measurement label
 
 ##### Measurement Decimal
 
@@ -1449,7 +1569,7 @@ This Function outputs to a 128x64 SSD1309 OLED display via I2C. This display Fun
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, Output, PID, 
+- Selections: Input, Math, Function, Output, PID
 - Description: Measurement to display on the line
 
 ##### Max Age
@@ -1457,6 +1577,11 @@ This Function outputs to a 128x64 SSD1309 OLED display via I2C. This display Fun
 - Type: Decimal
 - Default Value: 360
 - Description: The maximum age (seconds) of the measurement to use
+
+##### Measurement Label
+
+- Type: Text
+- Description: Set to overwrite the default measurement label
 
 ##### Measurement Decimal
 
@@ -1492,7 +1617,7 @@ This function acquires two measurements and uses them within a user-set equation
 ##### Measurement A
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Measurement to replace a
 
 ##### Measurement A Max Age
@@ -1504,7 +1629,7 @@ This function acquires two measurements and uses them within a user-set equation
 ##### Measurement B
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Measurement to replace b
 
 ##### Measurement B Max Age
@@ -1535,7 +1660,7 @@ This function acquires a measurement and uses it within a user-set equation and 
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Measurement to replace "x" in the equation
 
 ##### Max Age
@@ -1577,7 +1702,7 @@ This function calculates the humidity based on wet and dry bulb temperature meas
 ##### Dry Bulb Temperature
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Dry Bulb temperature measurement
 
 ##### Dry Bulb Max Age
@@ -1589,7 +1714,7 @@ This function calculates the humidity based on wet and dry bulb temperature meas
 ##### Wet Bulb Temperature
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Wet Bulb temperature measurement
 
 ##### Wet Bulb Max Age
@@ -1601,7 +1726,7 @@ This function calculates the humidity based on wet and dry bulb temperature meas
 ##### Pressure
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Pressure measurement
 
 ##### Pressure Max Age
@@ -1620,11 +1745,13 @@ This function will attempt to perform a PID controller autotune. That is, an out
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Select a measurement the selected output will affect
 
 ##### Output
 
+- Type: Select Device, Measurement, and Channel
+- Selections: Output
 - Description: Select an output to modulate that will affect the measurement
 
 ##### Period
@@ -1675,7 +1802,7 @@ This function stores the first available measurement. This is useful if you have
 ##### Measurement A
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Measurement to replace a
 
 ##### Measurement A Max Age
@@ -1687,7 +1814,7 @@ This function stores the first available measurement. This is useful if you have
 ##### Measurement B
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Measurement to replace b
 
 ##### Measurement B Max Age
@@ -1699,7 +1826,7 @@ This function stores the first available measurement. This is useful if you have
 ##### Measurement C
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Measurement to replace C
 
 ##### Measurement C Max Age
@@ -1781,7 +1908,7 @@ This function acquires multiple values from a single measurement, calculates sta
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Measurement to perform statistics on
 
 ### Sum (Last, Multiple)
@@ -1835,7 +1962,7 @@ This function acquires the past measurements (within Max Age) for the selected m
 ##### Measurement
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Measurement to replace "x" in the equation
 
 ##### Max Age
@@ -1866,7 +1993,7 @@ This function calculates the vapor pressure deficit based on leaf temperature an
 ##### Temperature
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Temperature measurement
 
 ##### Temperature Max Age
@@ -1878,7 +2005,7 @@ This function calculates the vapor pressure deficit based on leaf temperature an
 ##### Humidity
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Humidity measurement
 
 ##### Humidity Max Age
@@ -1903,7 +2030,7 @@ This function acquires 2 measurements, calculates the difference, and if the dif
 ##### Measurement A
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Measurement A
 
 ##### Measurement A Max Age
@@ -1915,7 +2042,7 @@ This function acquires 2 measurements, calculates the difference, and if the dif
 ##### Measurement B
 
 - Type: Select Measurement
-- Selections: Input, Math, Function, 
+- Selections: Input, Math, Function
 - Description: Measurement B
 
 ##### Measurement A Max Age

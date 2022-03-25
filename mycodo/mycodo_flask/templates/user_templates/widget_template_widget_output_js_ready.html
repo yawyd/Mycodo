@@ -1,0 +1,65 @@
+
+  $('.turn_on').click(function() {
+    const btn_val = this.name;
+    const send_cmd = btn_val.substring(btn_val.indexOf('/')+1);
+    {% if not misc.hide_alert_info %}
+    toastr['info']('Command sent to turn output On');
+    {% endif %}
+    modOutputOutput(send_cmd);
+  });
+  $('.turn_off').click(function() {
+    const btn_val = this.name;
+    const send_cmd = btn_val.substring(btn_val.indexOf('/') + 1);
+    {% if not misc.hide_alert_info %}
+    toastr['info']('Command sent to turn output Off');
+    {% endif %}
+    modOutputOutput(send_cmd);
+  });
+  $('.sec_on_amt').click(function() {
+    const btn_val = this.name;
+    const chart = btn_val.split('/')[0];
+    const output_id = btn_val.split('/')[1];
+    const channel_id = btn_val.split('/')[2];
+    const on_sec = $('#sec_on_amt_' + chart + '_' + output_id + '_' + channel_id).val();
+    const send_cmd = btn_val.substring(btn_val.indexOf('/') + 1);
+    {% if not misc.hide_alert_info %}
+    toastr['info']('Command sent to turn output On for ' + on_sec);
+    {% endif %}
+    modOutputOutput(send_cmd + on_sec);
+  });   
+  $('.vol_on_amt').click(function() {
+    const btn_val = this.name;
+    const chart = btn_val.split('/')[0];
+    const output_id = btn_val.split('/')[1];
+    const channel_id = btn_val.split('/')[2];
+    const on_vol = $('#vol_on_amt_' + chart + '_' + output_id + '_' + channel_id).val();
+    const send_cmd = btn_val.substring(btn_val.indexOf('/') + 1);
+    {% if not misc.hide_alert_info %}
+    toastr['info']('Command sent to output with volume ' + on_vol);
+    {% endif %}
+    modOutputOutput(send_cmd + on_vol);
+  });
+  $('.value_on_amt').click(function() {
+    const btn_val = this.name;
+    const chart = btn_val.split('/')[0];
+    const output_id = btn_val.split('/')[1];
+    const channel_id = btn_val.split('/')[2];
+    const on_value = $('#value_on_amt_' + chart + '_' + output_id + '_' + channel_id).val();
+    const send_cmd = btn_val.substring(btn_val.indexOf('/') + 1);
+    {% if not misc.hide_alert_info %}
+    toastr['info']('Command sent to output with value ' + on_value);
+    {% endif %}
+    modOutputOutput(send_cmd + on_value);
+  });
+  $('.duty_cycle_on_amt').click(function() {
+    const btn_val = this.name;
+    const chart = btn_val.split('/')[0];
+    const output_id = btn_val.split('/')[1];
+    const channel_id = btn_val.split('/')[2];
+    const on_dc = $('#duty_cycle_on_amt_' + chart + '_' + output_id + '_' + channel_id).val();
+    const send_cmd = btn_val.substring(btn_val.indexOf('/') + 1);
+    {% if not misc.hide_alert_info %}
+    toastr['info']('Command sent to turn output On with a duty cycle of ' + on_dc + '%');
+    {% endif %}
+    modOutputOutput(send_cmd + on_dc);
+  });

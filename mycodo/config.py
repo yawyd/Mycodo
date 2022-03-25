@@ -2,6 +2,7 @@
 #
 #  config.py - Global Mycodo settings
 #
+from mycodo.config_translations import TRANSLATIONS
 import binascii
 import sys
 from datetime import timedelta
@@ -11,7 +12,6 @@ from flask_babel import lazy_gettext
 
 # Append proper path for other software reading this config file
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-from config_translations import TRANSLATIONS
 
 MYCODO_VERSION = '8.12.9'
 ALEMBIC_VERSION = 'b354722c9b8b'
@@ -33,13 +33,15 @@ ENABLE_FLASK_PROFILER = False
 
 
 # Install path (the parent directory of this script)
-INSTALL_DIRECTORY = os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + '/..')
+INSTALL_DIRECTORY = os.path.abspath(
+    os.path.dirname(os.path.realpath(__file__)) + '/..')
 
 # Database
 DATABASE_NAME = "mycodo.db"
 ALEMBIC_PATH = os.path.join(INSTALL_DIRECTORY, 'alembic_db')
 DATABASE_PATH = os.path.join(INSTALL_DIRECTORY, 'databases')
-ALEMBIC_UPGRADE_POST = os.path.join(ALEMBIC_PATH, 'alembic_post_upgrade_versions')
+ALEMBIC_UPGRADE_POST = os.path.join(
+    ALEMBIC_PATH, 'alembic_post_upgrade_versions')
 SQL_DATABASE_MYCODO = os.path.join(DATABASE_PATH, DATABASE_NAME)
 MYCODO_DB_PATH = 'sqlite:///' + SQL_DATABASE_MYCODO
 
@@ -57,17 +59,21 @@ PATH_INPUTS_CUSTOM = os.path.join(PATH_INPUTS, 'custom_inputs')
 PATH_OUTPUTS_CUSTOM = os.path.join(PATH_OUTPUTS, 'custom_outputs')
 PATH_WIDGETS_CUSTOM = os.path.join(PATH_WIDGETS, 'custom_widgets')
 PATH_USER_SCRIPTS = os.path.join(INSTALL_DIRECTORY, 'mycodo/user_scripts')
-PATH_HTML_USER = os.path.join(INSTALL_DIRECTORY, 'mycodo/mycodo_flask/templates/user_templates')
-PATH_PYTHON_CODE_USER = os.path.join(INSTALL_DIRECTORY, 'mycodo/user_python_code')
-PATH_MEASUREMENTS_BACKUP = os.path.join(INSTALL_DIRECTORY, 'mycodo/backup_measurements')
-PATH_SETTINGS_BACKUP = os.path.join(INSTALL_DIRECTORY, 'mycodo/backup_settings')
+PATH_HTML_USER = os.path.join(
+    INSTALL_DIRECTORY, 'mycodo/mycodo_flask/templates/user_templates')
+PATH_PYTHON_CODE_USER = os.path.join(
+    INSTALL_DIRECTORY, 'mycodo/user_python_code')
+PATH_MEASUREMENTS_BACKUP = os.path.join(
+    INSTALL_DIRECTORY, 'mycodo/backup_measurements')
+PATH_SETTINGS_BACKUP = os.path.join(
+    INSTALL_DIRECTORY, 'mycodo/backup_settings')
 USAGE_REPORTS_PATH = os.path.join(INSTALL_DIRECTORY, 'output_usage_reports')
 DEPENDENCY_INIT_FILE = os.path.join(INSTALL_DIRECTORY, '.dependency')
 UPGRADE_INIT_FILE = os.path.join(INSTALL_DIRECTORY, '.upgrade')
-BACKUP_PATH = '/var/Mycodo-backups'  # Where Mycodo backups are stored
+BACKUP_PATH = './backups'  # Where Mycodo backups are stored
 
 # Log files
-LOG_PATH = '/var/log/mycodo'  # Where generated logs are stored
+LOG_PATH = './logs'  # Where generated logs are stored
 LOGIN_LOG_FILE = os.path.join(LOG_PATH, 'login.log')
 DAEMON_LOG_FILE = os.path.join(LOG_PATH, 'mycodo.log')
 KEEPUP_LOG_FILE = os.path.join(LOG_PATH, 'mycodokeepup.log')
@@ -76,15 +82,17 @@ DEPENDENCY_LOG_FILE = os.path.join(LOG_PATH, 'mycododependency.log')
 UPGRADE_LOG_FILE = os.path.join(LOG_PATH, 'mycodoupgrade.log')
 UPGRADE_TMP_LOG_FILE = '/tmp/mycodoupgrade.log'
 RESTORE_LOG_FILE = os.path.join(LOG_PATH, 'mycodorestore.log')
+
 HTTP_ACCESS_LOG_FILE = '/var/log/nginx/access.log'
 HTTP_ERROR_LOG_FILE = '/var/log/nginx/error.log'
 
+
 # Lock files
-LOCK_PATH = '/var/lock'
+LOCK_PATH = './lock'
 LOCK_FILE_STREAM = os.path.join(LOCK_PATH, 'mycodo-camera-stream.pid')
 
 # Run files
-RUN_PATH = '/var/run'
+RUN_PATH = '.'
 FRONTEND_PID_FILE = os.path.join(RUN_PATH, 'mycodoflask.pid')
 DAEMON_PID_FILE = os.path.join(RUN_PATH, 'mycodo.pid')
 
@@ -110,9 +118,9 @@ else:
 # InfluxDB time-series database
 INFLUXDB_HOST = 'localhost' if not DOCKER_CONTAINER else 'influxdb'
 INFLUXDB_PORT = 8086
-INFLUXDB_USER = 'mycodo'
-INFLUXDB_PASSWORD = 'mmdu77sj3nIoiajjs'
-INFLUXDB_DATABASE = 'mycodo_db'
+INFLUXDB_USER = 'yawyd'
+INFLUXDB_PASSWORD = '1234'
+INFLUXDB_DATABASE = 'mycodo'
 
 # Anonymous statistics
 STATS_INTERVAL = 86400
@@ -157,7 +165,8 @@ DASHBOARD_WIDGETS = [
     ('indicator', TRANSLATIONS['indicator']['title']),
     ('measurement', TRANSLATIONS['measurement']['title']),
     ('output', TRANSLATIONS['output']['title']),
-    ('output_pwm_slider', f"{TRANSLATIONS['output']['title']}: {lazy_gettext('PWM Slider')}"),
+    ('output_pwm_slider',
+     f"{TRANSLATIONS['output']['title']}: {lazy_gettext('PWM Slider')}"),
     ('pid_control', lazy_gettext('PID Control')),
     ('python_code', lazy_gettext('Python Code')),
     ('camera', TRANSLATIONS['camera']['title'])
@@ -249,8 +258,10 @@ LCD_INFO = {
             ('pip-pypi', 'PIL', 'Pillow==8.1.2'),
             ('pip-pypi', 'usb.core', 'pyusb==1.1.1'),
             ('pip-pypi', 'adafruit_extended_bus', 'Adafruit-extended-bus==1.0.2'),
-            ('pip-pypi', 'adafruit_framebuf', 'adafruit-circuitpython-framebuf==1.4.9'),
-            ('pip-pypi', 'adafruit_ssd1306', 'adafruit-circuitpython-ssd1306==2.12.4')
+            ('pip-pypi', 'adafruit_framebuf',
+             'adafruit-circuitpython-framebuf==1.4.9'),
+            ('pip-pypi', 'adafruit_ssd1306',
+             'adafruit-circuitpython-ssd1306==2.12.4')
         ],
         'interfaces': ['I2C', 'SPI']
     },
@@ -262,8 +273,10 @@ LCD_INFO = {
             ('pip-pypi', 'PIL', 'Pillow==8.1.2'),
             ('pip-pypi', 'usb.core', 'pyusb==1.1.1'),
             ('pip-pypi', 'adafruit_extended_bus', 'Adafruit-extended-bus==1.0.2'),
-            ('pip-pypi', 'adafruit_framebuf', 'adafruit-circuitpython-framebuf==1.4.9'),
-            ('pip-pypi', 'adafruit_ssd1306', 'adafruit-circuitpython-ssd1306==2.12.4')
+            ('pip-pypi', 'adafruit_framebuf',
+             'adafruit-circuitpython-framebuf==1.4.9'),
+            ('pip-pypi', 'adafruit_ssd1306',
+             'adafruit-circuitpython-ssd1306==2.12.4')
         ],
         'interfaces': ['I2C', 'SPI']
     },
@@ -275,7 +288,8 @@ LCD_INFO = {
             ('pip-pypi', 'PIL', 'Pillow==8.1.2'),
             ('pip-pypi', 'Adafruit_GPIO', 'Adafruit-GPIO==1.0.3'),
             ('pip-pypi', 'Adafruit_PureIO', 'Adafruit-PureIO==1.1.8'),
-            ('pip-pypi', 'Adafruit_SSD1306', 'git+https://github.com/adafruit/Adafruit_Python_SSD1306.git')
+            ('pip-pypi', 'Adafruit_SSD1306',
+             'git+https://github.com/adafruit/Adafruit_Python_SSD1306.git')
         ],
         'interfaces': ['I2C', 'SPI']
     },
@@ -287,7 +301,8 @@ LCD_INFO = {
             ('pip-pypi', 'PIL', 'Pillow==8.1.2'),
             ('pip-pypi', 'Adafruit_GPIO', 'Adafruit-GPIO==1.0.3'),
             ('pip-pypi', 'Adafruit_PureIO', 'Adafruit-PureIO==1.1.8'),
-            ('pip-pypi', 'Adafruit_SSD1306', 'git+https://github.com/adafruit/Adafruit_Python_SSD1306.git')
+            ('pip-pypi', 'Adafruit_SSD1306',
+             'git+https://github.com/adafruit/Adafruit_Python_SSD1306.git')
         ],
         'interfaces': ['I2C', 'SPI']
     }
@@ -300,8 +315,10 @@ LCDS = [
     ('16x2_grove_lcd_rgb', LCD_INFO['16x2_grove_lcd_rgb']['name']),
     ('128x32_pioled', LCD_INFO['128x32_pioled']['name']),
     ('128x64_pioled', LCD_INFO['128x64_pioled']['name']),
-    ('128x32_pioled_circuit_python', LCD_INFO['128x32_pioled_circuit_python']['name']),
-    ('128x64_pioled_circuit_python', LCD_INFO['128x64_pioled_circuit_python']['name'])
+    ('128x32_pioled_circuit_python',
+     LCD_INFO['128x32_pioled_circuit_python']['name']),
+    ('128x64_pioled_circuit_python',
+     LCD_INFO['128x64_pioled_circuit_python']['name'])
 ]
 
 # Math info
@@ -441,11 +458,11 @@ METHOD_DEP_BASE = [
          '/var/mycodo-root/mycodo/mycodo_flask/static/js/user_js/highcharts-9.1.2.js'
      ],
      [
-        'wget --no-clobber https://code.highcharts.com/zips/Highcharts-9.1.2.zip',
-        'unzip Highcharts-9.1.2.zip -d Highcharts-9.1.2',
-        'cp -rf Highcharts-9.1.2/code/highcharts.js /var/mycodo-root/mycodo/mycodo_flask/static/js/user_js/highcharts-9.1.2.js',
-        'cp -rf Highcharts-9.1.2/code/highcharts.js.map /var/mycodo-root/mycodo/mycodo_flask/static/js/user_js/highcharts.js.map',
-        'rm -rf Highcharts-9.1.2'
+         'wget --no-clobber https://code.highcharts.com/zips/Highcharts-9.1.2.zip',
+         'unzip Highcharts-9.1.2.zip -d Highcharts-9.1.2',
+         'cp -rf Highcharts-9.1.2/code/highcharts.js /var/mycodo-root/mycodo/mycodo_flask/static/js/user_js/highcharts-9.1.2.js',
+         'cp -rf Highcharts-9.1.2/code/highcharts.js.map /var/mycodo-root/mycodo/mycodo_flask/static/js/user_js/highcharts.js.map',
+         'rm -rf Highcharts-9.1.2'
      ])
 ]
 
@@ -691,15 +708,20 @@ FUNCTION_INFO = {
 
 FUNCTIONS = [
     ('function_actions', FUNCTION_INFO['function_actions']['name']),
-    ('conditional_conditional', FUNCTION_INFO['conditional_conditional']['name']),
+    ('conditional_conditional',
+     FUNCTION_INFO['conditional_conditional']['name']),
     ('pid_pid', FUNCTION_INFO['pid_pid']['name']),
     ('trigger_edge', FUNCTION_INFO['trigger_edge']['name']),
     ('trigger_output', FUNCTION_INFO['trigger_output']['name']),
     ('trigger_output_pwm', FUNCTION_INFO['trigger_output_pwm']['name']),
-    ('trigger_timer_daily_time_point', FUNCTION_INFO['trigger_timer_daily_time_point']['name']),
-    ('trigger_timer_daily_time_span', FUNCTION_INFO['trigger_timer_daily_time_span']['name']),
-    ('trigger_timer_duration', FUNCTION_INFO['trigger_timer_duration']['name']),
-    ('trigger_run_pwm_method', FUNCTION_INFO['trigger_run_pwm_method']['name']),
+    ('trigger_timer_daily_time_point',
+     FUNCTION_INFO['trigger_timer_daily_time_point']['name']),
+    ('trigger_timer_daily_time_span',
+     FUNCTION_INFO['trigger_timer_daily_time_span']['name']),
+    ('trigger_timer_duration',
+     FUNCTION_INFO['trigger_timer_duration']['name']),
+    ('trigger_run_pwm_method',
+     FUNCTION_INFO['trigger_run_pwm_method']['name']),
     ('trigger_sunrise_sunset', FUNCTION_INFO['trigger_sunrise_sunset']['name'])
 ]
 

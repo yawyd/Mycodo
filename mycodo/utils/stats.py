@@ -95,7 +95,7 @@ def add_update_csv(csv_file, key, value):
             writer.writerow(header)
             writer.writerows(temp_dict.items())
 
-        uid_gid = pwd.getpwnam('mycodo').pw_uid
+        uid_gid = pwd.getpwnam('yawyd').pw_uid
         os.chown(csv_file, uid_gid, uid_gid)
         os.chmod(csv_file, 0o664)
         os.remove(temp_file_name)  # delete backed-up original
@@ -192,7 +192,7 @@ def recreate_stat_file():
     if anonymous_id is not provided, generate one
 
     """
-    uid_gid = pwd.getpwnam('mycodo').pw_uid
+    uid_gid = pwd.getpwnam('yawyd').pw_uid
     if not os.path.isfile(ID_FILE):
         anonymous_id = get_anonymous_id()
         with open(ID_FILE, 'w') as write_file:

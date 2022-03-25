@@ -5,11 +5,6 @@
 
 exec 2>&1
 
-if [[ "$EUID" -ne 0 ]]; then
-    printf "Must be run as root.\n"
-    exit 1
-fi
-
 # Current Mycodo major version number
 MYCODO_MAJOR_VERSION="8"
 
@@ -111,7 +106,6 @@ case "${1:-''}" in
     'compile-mycodo-wrapper')
         printf "\n#### Compiling mycodo_wrapper\n"
         gcc "${MYCODO_PATH}"/mycodo/scripts/mycodo_wrapper.c -o "${MYCODO_PATH}"/mycodo/scripts/mycodo_wrapper
-        chown root:mycodo "${MYCODO_PATH}"/mycodo/scripts/mycodo_wrapper
         chmod 4770 "${MYCODO_PATH}"/mycodo/scripts/mycodo_wrapper
     ;;
     'compile-translations')
@@ -121,10 +115,8 @@ case "${1:-''}" in
     ;;
     'create-files-directories')
         printf "\n#### Creating files and directories\n"
-        mkdir -p /var/log/mycodo
-        mkdir -p /var/Mycodo-backups
-        mkdir -p /usr/local/mycodo
-
+        mkdir -p "${MYCODO_PATH}/logs"
+        mkdir -p "${MYCODO_PATH}/backups"
         mkdir -p "${MYCODO_PATH}"/install
         mkdir -p "${MYCODO_PATH}"/mycodo
         mkdir -p "${MYCODO_PATH}"/databases
@@ -134,59 +126,31 @@ case "${1:-''}" in
         mkdir -p "${MYCODO_PATH}"/mycodo/mycodo_flask/static/js/user_js
         mkdir -p "${MYCODO_PATH}"/mycodo/mycodo_flask/static/css/user_css
 
-        if [[ ! -e /var/log/mycodo/mycodo.log ]]; then
-            touch /var/log/mycodo/mycodo.log
+        if [[ ! -e ${MYCODO_PATH}/logs/mycodo.log ]]; then
+            touch ${MYCODO_PATH}/logs/mycodo.log
         fi
-        if [[ ! -e /var/log/mycodo/mycodobackup.log ]]; then
-            touch /var/log/mycodo/mycodobackup.log
+        if [[ ! -e ${MYCODO_PATH}/logs/mycodobackup.log ]]; then
+            touch ${MYCODO_PATH}/logs/mycodobackup.log
         fi
-        if [[ ! -e /var/log/mycodo/mycodokeepup.log ]]; then
-            touch /var/log/mycodo/mycodokeepup.log
+        if [[ ! -e ${MYCODO_PATH}/logs/mycodokeepup.log ]]; then
+            touch ${MYCODO_PATH}/logs/mycodokeepup.log
         fi
-        if [[ ! -e /var/log/mycodo/mycododependency.log ]]; then
-            touch /var/log/mycodo/mycododependency.log
+        if [[ ! -e ${MYCODO_PATH}/logs/mycododependency.log ]]; then
+            touch ${MYCODO_PATH}/logs/mycododependency.log
         fi
-        if [[ ! -e /var/log/mycodo/mycodoupgrade.log ]]; then
-            touch /var/log/mycodo/mycodoupgrade.log
+        if [[ ! -e ${MYCODO_PATH}/logs/mycodoupgrade.log ]]; then
+            touch ${MYCODO_PATH}/logs/mycodoupgrade.log
         fi
-        if [[ ! -e /var/log/mycodo/mycodorestore.log ]]; then
-            touch /var/log/mycodo/mycodorestore.log
+        if [[ ! -e ${MYCODO_PATH}/logs/mycodorestore.log ]]; then
+            touch ${MYCODO_PATH}/logs/mycodorestore.log
         fi
-        if [[ ! -e /var/log/mycodo/login.log ]]; then
-            touch /var/log/mycodo/login.log
+        if [[ ! -e ${MYCODO_PATH}/logs/login.log ]]; then
+            touch ${MYCODO_PATH}/logs/login.log
         fi
 
         # Create empty mycodo database file if it doesn't exist
         if [[ ! -e ${MYCODO_PATH}/databases/mycodo.db ]]; then
-            touch "${MYCODO_PATH}"/databases/mycodo.db
-        fi
-    ;;
-    'create-symlinks')
-        printf "\n#### Creating symlinks to Mycodo executables\n"
-        ln -sfn "${MYCODO_PATH}" /var/mycodo-root
-        ln -sfn "${MYCODO_PATH}"/mycodo/mycodo_daemon.py /usr/bin/mycodo-daemon
-        ln -sfn "${MYCODO_PATH}"/mycodo/mycodo_client.py /usr/bin/mycodo-client
-        ln -sfn "${MYCODO_PATH}"/mycodo/scripts/upgrade_commands.sh /usr/bin/mycodo-commands
-        ln -sfn "${MYCODO_PATH}"/mycodo/scripts/mycodo_backup_create.sh /usr/bin/mycodo-backup
-        ln -sfn "${MYCODO_PATH}"/mycodo/scripts/mycodo_backup_restore.sh /usr/bin/mycodo-restore
-        ln -sfn "${MYCODO_PATH}"/mycodo/scripts/mycodo_wrapper /usr/bin/mycodo-wrapper
-        ln -sfn "${MYCODO_PATH}"/env/bin/pip3 /usr/bin/mycodo-pip
-        ln -sfn "${MYCODO_PATH}"/env/bin/python3 /usr/bin/mycodo-python
-    ;;
-    'create-user')
-        printf "\n#### Creating mycodo user\n"
-        useradd -M mycodo
-        adduser mycodo adm
-        adduser mycodo dialout
-        adduser mycodo i2c
-        adduser mycodo kmem
-        adduser mycodo video
-        if getent group gpio; then
-            adduser mycodo gpio
-        fi
-        if id pi &>/dev/null; then
-            adduser pi mycodo
-            adduser mycodo pi
+            touch "${MYCODO_PATH}/databases/mycodo.db"
         fi
     ;;
     'generate-widget-html')
@@ -195,12 +159,8 @@ case "${1:-''}" in
     ;;
     'initialize')
         printf "\n#### Running initialization\n"
-        /bin/bash "${MYCODO_PATH}"/mycodo/scripts/upgrade_commands.sh create-user
         /bin/bash "${MYCODO_PATH}"/mycodo/scripts/upgrade_commands.sh compile-mycodo-wrapper
-        /bin/bash "${MYCODO_PATH}"/mycodo/scripts/upgrade_commands.sh create-symlinks
         /bin/bash "${MYCODO_PATH}"/mycodo/scripts/upgrade_commands.sh create-files-directories
-        /bin/bash "${MYCODO_PATH}"/mycodo/scripts/upgrade_commands.sh update-permissions
-        systemctl daemon-reload
     ;;
     'restart-daemon')
         printf "\n#### Restarting the Mycodo daemon\n"
@@ -221,7 +181,6 @@ case "${1:-''}" in
         /bin/bash "${MYCODO_PATH}"/mycodo/scripts/upgrade_commands.sh setup-virtualenv
         /bin/bash "${MYCODO_PATH}"/mycodo/scripts/upgrade_commands.sh update-pip3-packages
         /bin/bash "${MYCODO_PATH}"/mycodo/scripts/upgrade_commands.sh update-dependencies
-        /bin/bash "${MYCODO_PATH}"/mycodo/scripts/upgrade_commands.sh update-permissions
     ;;
     'ssl-certs-generate')
         printf "\n#### Generating SSL certificates at %s/mycodo/mycodo_flask/ssl_certs (replace with your own if desired)\n" "${MYCODO_PATH}"
@@ -250,7 +209,7 @@ case "${1:-''}" in
     ;;
     'uninstall-apt-pip')
         printf "\n#### Uninstalling apt version of pip (if installed)\n"
-        apt purge -y python-pip
+        sudo apt purge -y python-pip
     ;;
     'update-alembic')
         printf "\n#### Upgrading Mycodo database with alembic (if needed)\n"
@@ -263,7 +222,7 @@ case "${1:-''}" in
     ;;
     'update-apt')
         printf "\n#### Updating apt repositories\n"
-        apt update -y
+        sudo apt update -y
     ;;
     'update-cron')  # TODO: Remove at next major revision
         printf "\n#### Remove Mycodo restart monitor crontab entry (if it exists)\n"
@@ -276,7 +235,7 @@ case "${1:-''}" in
     'install-bcm2835')
         printf "\n#### Installing bcm2835\n"
         cd "${MYCODO_PATH}"/install || return
-        apt install -y automake libtool
+        sudo apt install -y automake libtool
         wget ${MCB2835_URL} -O bcm2835.tar.gz
         mkdir bcm2835
         tar xzf bcm2835.tar.gz -C bcm2835 --strip-components=1
@@ -299,7 +258,7 @@ case "${1:-''}" in
         fi
     ;;
     'build-pigpiod')
-        apt install -y python3-pigpio
+        sudo apt install -y python3-pigpio
         cd "${MYCODO_PATH}"/install || return
         # wget --quiet -P "${MYCODO_PATH}"/install abyz.co.uk/rpi/pigpio/pigpio.zip
         wget ${PIGPIO_URL} -O pigpio.tar.gz
@@ -322,8 +281,8 @@ case "${1:-''}" in
     ;;
     'uninstall-pigpiod')
         printf "\n#### Uninstalling pigpiod\n"
-        apt remove -y python3-pigpio
-        apt install -y jq
+        sudo apt remove -y python3-pigpio
+        sudo apt install -y jq
         cd "${MYCODO_PATH}"/install || return
         # wget --quiet -P "${MYCODO_PATH}"/install abyz.co.uk/rpi/pigpio/pigpio.zip
         wget ${PIGPIO_URL} -O pigpio.tar.gz
@@ -439,9 +398,8 @@ case "${1:-''}" in
     ;;
     'update-packages')
         printf "\n#### Installing prerequisite apt packages and update pip\n"
-        apt remove -y apache2 python-cffi-backend python3-cffi-backend
-        apt install -y ${APT_PKGS}
-        python3 -m pip install --upgrade pip
+        sudo apt remove -y apache2 python-cffi-backend python3-cffi-backend
+        sudo apt install -y ${APT_PKGS}
     ;;
     'update-permissions')
         printf "\n#### Setting permissions\n"
@@ -553,26 +511,26 @@ case "${1:-''}" in
         mkdir -p "${MYCODO_PATH}"/mycodo/mycodo_flask/static/js/user_js
         mkdir -p "${MYCODO_PATH}"/mycodo/mycodo_flask/static/css/user_css
 
-        if [[ ! -e /var/log/mycodo/mycodo.log ]]; then
-            touch /var/log/mycodo/mycodo.log
+        if [[ ! -e ${MYCODO_PATH}/logs/mycodo.log ]]; then
+            touch ${MYCODO_PATH}/logs/mycodo.log
         fi
-        if [[ ! -e /var/log/mycodo/mycodobackup.log ]]; then
-            touch /var/log/mycodo/mycodobackup.log
+        if [[ ! -e ${MYCODO_PATH}/logs/mycodobackup.log ]]; then
+            touch ${MYCODO_PATH}/logs/mycodobackup.log
         fi
-        if [[ ! -e /var/log/mycodo/mycodokeepup.log ]]; then
-            touch /var/log/mycodo/mycodokeepup.log
+        if [[ ! -e ${MYCODO_PATH}/logs/mycodokeepup.log ]]; then
+            touch ${MYCODO_PATH}/logs/mycodokeepup.log
         fi
-        if [[ ! -e /var/log/mycodo/mycododependency.log ]]; then
-            touch /var/log/mycodo/mycododependency.log
+        if [[ ! -e ${MYCODO_PATH}/logs/mycododependency.log ]]; then
+            touch ${MYCODO_PATH}/logs/mycododependency.log
         fi
-        if [[ ! -e /var/log/mycodo/mycodoupgrade.log ]]; then
-            touch /var/log/mycodo/mycodoupgrade.log
+        if [[ ! -e ${MYCODO_PATH}/logs/mycodoupgrade.log ]]; then
+            touch ${MYCODO_PATH}/logs/mycodoupgrade.log
         fi
-        if [[ ! -e /var/log/mycodo/mycodorestore.log ]]; then
-            touch /var/log/mycodo/mycodorestore.log
+        if [[ ! -e ${MYCODO_PATH}/logs/mycodorestore.log ]]; then
+            touch ${MYCODO_PATH}/logs/mycodorestore.log
         fi
-        if [[ ! -e /var/log/mycodo/login.log ]]; then
-            touch /var/log/mycodo/login.log
+        if [[ ! -e ${MYCODO_PATH}/logs/login.log ]]; then
+            touch ${MYCODO_PATH}/logs/login.log
         fi
 
         # Create empty mycodo database file if it doesn't exist
@@ -598,8 +556,8 @@ case "${1:-''}" in
     ;;
     'install-docker-ce-cli')
         printf "\n#### Installing Docker Client\n"
-        apt update
-        apt -y install \
+        sudo apt update
+        sudo apt -y install \
             apt-transport-https \
             ca-certificates \
             curl \
@@ -608,7 +566,7 @@ case "${1:-''}" in
         curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
 
         if [[ ${UNAME_TYPE} == 'x86_64' ]]; then
-            add-apt-repository -y \
+            sudo add-apt-repository -y \
                "deb [arch=amd64] https://download.docker.com/linux/debian \
                $(lsb_release -cs) \
                stable"

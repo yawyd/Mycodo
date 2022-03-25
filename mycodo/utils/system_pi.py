@@ -12,7 +12,7 @@ import socket
 import subprocess
 import time
 import traceback
-from collections import OrderedDict
+from collections import OrderedDict, UserDict
 from threading import Timer
 
 from mycodo.config import INSTALL_DIRECTORY
@@ -50,11 +50,13 @@ def parse_custom_option_values(controllers, dict_controller=None):
             if each_controller.custom_options.startswith("{"):
                 custom_options = parse_custom_option_values_json(
                     controllers, dict_controller, unique_id=each_controller.unique_id)
-                custom_options_values.update({each_controller.unique_id: custom_options})
+                custom_options_values.update(
+                    {each_controller.unique_id: custom_options})
             else:
                 custom_options = parse_custom_option_values_csv(
                     controllers, dict_controller, unique_id=each_controller.unique_id)
-                custom_options_values.update({each_controller.unique_id: custom_options})
+                custom_options_values.update(
+                    {each_controller.unique_id: custom_options})
 
     return custom_options_values
 
@@ -90,7 +92,8 @@ def parse_custom_option_values_csv(controllers, dict_controller=None, unique_id=
             elif each_controller.__tablename__ == 'output':
                 dev_name = each_controller.output_type
             else:
-                logger.error("Table name not recognized: {}".format(each_controller.__tablename__))
+                logger.error("Table name not recognized: {}".format(
+                    each_controller.__tablename__))
                 continue
 
             if 'custom_options' in dict_controller[dev_name]:
@@ -101,7 +104,8 @@ def parse_custom_option_values_csv(controllers, dict_controller=None, unique_id=
                 if ('id' in each_option and
                         'default_value' in each_option and
                         each_option['id'] not in custom_options_values[each_controller.unique_id]):
-                    custom_options_values[each_controller.unique_id][each_option['id']] = each_option['default_value']
+                    custom_options_values[each_controller.unique_id][each_option['id']
+                                                                     ] = each_option['default_value']
 
     if unique_id:
         return custom_options_values[unique_id]
@@ -141,7 +145,8 @@ def parse_custom_option_values_json(
             elif each_controller.__tablename__ == 'widget':
                 dev_name = each_controller.graph_type
             else:
-                logger.error("Table name not recognized: {}".format(each_controller.__tablename__))
+                logger.error("Table name not recognized: {}".format(
+                    each_controller.__tablename__))
                 continue
 
             if dev_name in dict_controller and key_name in dict_controller[dev_name]:
@@ -152,7 +157,8 @@ def parse_custom_option_values_json(
                 if ('id' in each_option and
                         'default_value' in each_option and
                         each_option['id'] not in custom_options_values[each_controller.unique_id]):
-                    custom_options_values[each_controller.unique_id][each_option['id']] = each_option['default_value']
+                    custom_options_values[each_controller.unique_id][each_option['id']
+                                                                     ] = each_option['default_value']
 
     if unique_id:
         return custom_options_values[unique_id]
@@ -183,7 +189,8 @@ def parse_custom_option_values_output_channels_json(
 
         if dict_controller:
             # Set default values if option not saved in database entry
-            output = db_retrieve_table(Output, unique_id=each_controller.output_id)
+            output = db_retrieve_table(
+                Output, unique_id=each_controller.output_id)
             if not output:
                 continue
             dev_name = output.output_type
@@ -195,15 +202,19 @@ def parse_custom_option_values_output_channels_json(
             for each_option in dict_custom_options:
                 if 'id' in each_option and 'default_value' in each_option:
                     if each_controller.channel not in custom_options_values[each_controller.output_id]:
-                        custom_options_values[each_controller.output_id][each_controller.channel] = {}
+                        custom_options_values[each_controller.output_id][each_controller.channel] = {
+                        }
                     if each_option['id'] not in custom_options_values[each_controller.output_id][each_controller.channel]:
                         # If a select type has cast_value set, cast the value as that type
                         if each_option['type'] == 'select' and 'cast_value' in each_option:
                             if each_option['cast_value'] == 'integer':
-                                each_option['default_value'] = int(each_option['default_value'])
+                                each_option['default_value'] = int(
+                                    each_option['default_value'])
                             elif each_option['cast_value'] == 'float':
-                                each_option['default_value'] = float(each_option['default_value'])
-                        custom_options_values[each_controller.output_id][each_controller.channel][each_option['id']] = each_option['default_value']
+                                each_option['default_value'] = float(
+                                    each_option['default_value'])
+                        custom_options_values[each_controller.output_id][each_controller.channel][each_option['id']
+                                                                                                  ] = each_option['default_value']
 
     return custom_options_values
 
@@ -230,7 +241,8 @@ def parse_custom_option_values_function_channels_json(
 
         if dict_controller:
             # Set default values if option not saved in database entry
-            function = db_retrieve_table(CustomController, unique_id=each_controller.function_id)
+            function = db_retrieve_table(
+                CustomController, unique_id=each_controller.function_id)
             if not function:
                 continue
             try:
@@ -246,15 +258,19 @@ def parse_custom_option_values_function_channels_json(
             for each_option in dict_custom_options:
                 if 'id' in each_option and 'default_value' in each_option:
                     if each_controller.channel not in custom_options_values[each_controller.function_id]:
-                        custom_options_values[each_controller.function_id][each_controller.channel] = {}
+                        custom_options_values[each_controller.function_id][each_controller.channel] = {
+                        }
                     if each_option['id'] not in custom_options_values[each_controller.function_id][each_controller.channel]:
                         # If a select type has cast_value set, cast the value as that type
                         if each_option['type'] == 'select' and 'cast_value' in each_option:
                             if each_option['cast_value'] == 'integer':
-                                each_option['default_value'] = int(each_option['default_value'])
+                                each_option['default_value'] = int(
+                                    each_option['default_value'])
                             elif each_option['cast_value'] == 'float':
-                                each_option['default_value'] = float(each_option['default_value'])
-                        custom_options_values[each_controller.function_id][each_controller.channel][each_option['id']] = each_option['default_value']
+                                each_option['default_value'] = float(
+                                    each_option['default_value'])
+                        custom_options_values[each_controller.function_id][each_controller.channel][each_option['id']
+                                                                                                    ] = each_option['default_value']
 
     return custom_options_values
 
@@ -281,7 +297,8 @@ def parse_custom_option_values_input_channels_json(
 
         if dict_controller:
             # Set default values if option not saved in database entry
-            input_dev = db_retrieve_table(Input, unique_id=each_controller.input_id)
+            input_dev = db_retrieve_table(
+                Input, unique_id=each_controller.input_id)
             if not input_dev:
                 continue
             try:
@@ -297,15 +314,19 @@ def parse_custom_option_values_input_channels_json(
             for each_option in dict_custom_options:
                 if 'id' in each_option and 'default_value' in each_option:
                     if each_controller.channel not in custom_options_values[each_controller.input_id]:
-                        custom_options_values[each_controller.input_id][each_controller.channel] = {}
+                        custom_options_values[each_controller.input_id][each_controller.channel] = {
+                        }
                     if each_option['id'] not in custom_options_values[each_controller.input_id][each_controller.channel]:
                         # If a select type has cast_value set, cast the value as that type
                         if each_option['type'] == 'select' and 'cast_value' in each_option:
                             if each_option['cast_value'] == 'integer':
-                                each_option['default_value'] = int(each_option['default_value'])
+                                each_option['default_value'] = int(
+                                    each_option['default_value'])
                             elif each_option['cast_value'] == 'float':
-                                each_option['default_value'] = float(each_option['default_value'])
-                        custom_options_values[each_controller.input_id][each_controller.channel][each_option['id']] = each_option['default_value']
+                                each_option['default_value'] = float(
+                                    each_option['default_value'])
+                        custom_options_values[each_controller.input_id][each_controller.channel][each_option['id']
+                                                                                                 ] = each_option['default_value']
 
     return custom_options_values
 
@@ -341,9 +362,15 @@ def dpkg_package_exists(package_name):
     start = "dpkg-query -W -f='${Status}'"
     end = '2>/dev/null | grep -c "ok installed"'
     cmd = "{} {} {}".format(start, package_name, end)
-    _, _, stat = cmd_output(cmd)
-    if not stat:
-        return True
+    try:
+        _, _, stat = cmd_output(cmd)
+        if not stat:
+            return True
+    except Exception as e:
+        import traceback
+        print(e, cmd)
+        traceback.print_exc()
+        return False
 
 
 def return_measurement_info(device_measurement, conversion):
@@ -394,7 +421,8 @@ def add_custom_measurements(measurements):
         else:
             for each_unit in each_measure.units.split(','):
                 if each_unit not in return_measurements[each_measure.name_safe]['units']:
-                    return_measurements[each_measure.name_safe]['units'].append(each_unit)
+                    return_measurements[each_measure.name_safe]['units'].append(
+                        each_unit)
 
     # Sort dictionary by keys
     sorted_keys = sorted(list(return_measurements), key=lambda s: s.casefold())
@@ -416,7 +444,8 @@ def all_conversions(conversions):
             conversions_combined[convert_str] = equation_str
 
     # Sort dictionary by keys
-    sorted_keys = sorted(list(conversions_combined), key=lambda s: s.casefold())
+    sorted_keys = sorted(list(conversions_combined),
+                         key=lambda s: s.casefold())
     sorted_dict_conversions = OrderedDict()
     for each_key in sorted_keys:
         sorted_dict_conversions[each_key] = conversions_combined[each_key]
@@ -466,7 +495,8 @@ def epoch_of_next_time(time_str):
         current_epoch = time.time()
         time_parts = time.ctime().split()  # split full time string
         time_parts[3] = time_str  # replace the time component
-        new_time = time.mktime(time.strptime(' '.join(time_parts)))  # convert to epoch
+        new_time = time.mktime(time.strptime(
+            ' '.join(time_parts)))  # convert to epoch
         if new_time < current_epoch:  # Add a day if in the past
             new_time += 86400
         return new_time
@@ -474,7 +504,7 @@ def epoch_of_next_time(time_str):
         return None
 
 
-def cmd_output(command, stdout_pipe=True, shell=True, timeout=360, user='mycodo', cwd='/home'):
+def cmd_output(command, stdout_pipe=True, shell=True, timeout=360, user='yawyd', cwd='/home'):
     """
     Executes a bash command and returns the output
 
@@ -526,13 +556,15 @@ def cmd_output(command, stdout_pipe=True, shell=True, timeout=360, user='mycodo'
                                stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE,
                                shell=shell,
-                               preexec_fn=demote(user_uid, user_gid, user_groups),
+                               preexec_fn=demote(
+                                   user_uid, user_gid, user_groups),
                                cwd=cwd,
                                env=env)
     else:
         cmd = subprocess.Popen(command,
                                shell=shell,
-                               preexec_fn=demote(user_uid, user_gid, user_groups),
+                               preexec_fn=demote(
+                                   user_uid, user_gid, user_groups),
                                cwd=cwd,
                                env=env)
 
@@ -637,7 +669,8 @@ def can_perform_backup():
     Returns value sin bytes
     """
     free_before = get_directory_free_space('/var/Mycodo-backups')
-    backup_size = get_directory_size(INSTALL_DIRECTORY, exclude=['env', 'cameras'])
+    backup_size = get_directory_size(
+        INSTALL_DIRECTORY, exclude=['env', 'cameras'])
     free_after = free_before - backup_size
     return backup_size, free_before, free_after
 
@@ -688,6 +721,7 @@ def base64_encode_bytes(key_bytes):
     encoded_str = str(encoded_bytes, "utf-8")
     return encoded_str
 
+
 def celsius_to_kelvin(celsius):
     try:
         kelvin = celsius + 273.15
@@ -729,4 +763,3 @@ def get_sec(time_str):
     """Convert HH:MM:SS string into number of seconds."""
     h, m, s = time_str.split(':')
     return int(h) * 3600 + int(m) * 60 + int(s)
-

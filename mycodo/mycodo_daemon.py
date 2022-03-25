@@ -23,77 +23,77 @@
 #
 #  Contact at kylegabriel.com
 
+from mycodo.utils.tools import next_schedule
+from mycodo.utils.tools import generate_output_usage_report
+from mycodo.utils.stats import send_anonymous_stats
+from mycodo.utils.stats import return_stat_file_dict
+from mycodo.utils.stats import recreate_stat_file
+from mycodo.utils.stats import add_update_csv
+from mycodo.utils.github_release_info import MycodoRelease
+from mycodo.utils.actions import trigger_controller_actions
+from mycodo.utils.actions import trigger_action
+from mycodo.utils.actions import parse_action_information
+from mycodo.utils.actions import get_condition_value_dict
+from mycodo.utils.actions import get_condition_value
+from mycodo.utils.database import db_retrieve_table_daemon
+from mycodo.devices.camera import camera_record
+from mycodo.databases.utils import session_scope
+from mycodo.databases.models import Trigger
+from mycodo.databases.models import PID
+from mycodo.databases.models import Misc
+from mycodo.databases.models import Math
+from mycodo.databases.models import LCD
+from mycodo.databases.models import Input
+from mycodo.databases.models import CustomController
+from mycodo.databases.models import Conditional
+from mycodo.databases.models import Camera
+from mycodo.controllers.controller_widget import WidgetController
+from mycodo.controllers.controller_trigger import TriggerController
+from mycodo.controllers.controller_pid import PIDController
+from mycodo.controllers.controller_output import OutputController
+from mycodo.controllers.controller_math import MathController
+from mycodo.controllers.controller_lcd import LCDController
+from mycodo.controllers.controller_input import InputController
+from mycodo.controllers.controller_function import FunctionController
+from mycodo.controllers.controller_conditional import ConditionalController
+from mycodo.config import UPGRADE_CHECK_INTERVAL
+from mycodo.config import STATS_INTERVAL
+from mycodo.config import STATS_CSV
+from mycodo.config import SQL_DATABASE_MYCODO
+from mycodo.config import MYCODO_VERSION
+from mycodo.config import DOCKER_CONTAINER
+from mycodo.config import DAEMON_PID_FILE
+from mycodo.config import DAEMON_LOG_FILE
+from daemonize import Daemonize
+from Pyro5.api import serve
+from Pyro5.api import expose
+from Pyro5.api import Proxy
+import timeit
+import time
+import threading
+import resource
+import logging
+import argparse
 import os
 import sys
 
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
-import argparse
-import logging
-import resource
-import threading
-import time
-import timeit
-
-from Pyro5.api import Proxy
-from Pyro5.api import expose
-from Pyro5.api import serve
-from daemonize import Daemonize
-
-from mycodo.config import DAEMON_LOG_FILE
-from mycodo.config import DAEMON_PID_FILE
-from mycodo.config import DOCKER_CONTAINER
-from mycodo.config import MYCODO_VERSION
-from mycodo.config import SQL_DATABASE_MYCODO
-from mycodo.config import STATS_CSV
-from mycodo.config import STATS_INTERVAL
-from mycodo.config import UPGRADE_CHECK_INTERVAL
-from mycodo.controllers.controller_conditional import ConditionalController
-from mycodo.controllers.controller_function import FunctionController
-from mycodo.controllers.controller_input import InputController
-from mycodo.controllers.controller_lcd import LCDController
-from mycodo.controllers.controller_math import MathController
-from mycodo.controllers.controller_output import OutputController
-from mycodo.controllers.controller_pid import PIDController
-from mycodo.controllers.controller_trigger import TriggerController
-from mycodo.controllers.controller_widget import WidgetController
-from mycodo.databases.models import Camera
-from mycodo.databases.models import Conditional
-from mycodo.databases.models import CustomController
-from mycodo.databases.models import Input
-from mycodo.databases.models import LCD
-from mycodo.databases.models import Math
-from mycodo.databases.models import Misc
-from mycodo.databases.models import PID
-from mycodo.databases.models import Trigger
-from mycodo.databases.utils import session_scope
-from mycodo.devices.camera import camera_record
-from mycodo.utils.database import db_retrieve_table_daemon
-from mycodo.utils.actions import get_condition_value
-from mycodo.utils.actions import get_condition_value_dict
-from mycodo.utils.actions import parse_action_information
-from mycodo.utils.actions import trigger_action
-from mycodo.utils.actions import trigger_controller_actions
-from mycodo.utils.github_release_info import MycodoRelease
-from mycodo.utils.stats import add_update_csv
-from mycodo.utils.stats import recreate_stat_file
-from mycodo.utils.stats import return_stat_file_dict
-from mycodo.utils.stats import send_anonymous_stats
-from mycodo.utils.tools import generate_output_usage_report
-from mycodo.utils.tools import next_schedule
 
 MYCODO_DB_PATH = 'sqlite:///' + SQL_DATABASE_MYCODO
 
 
 class DaemonController:
     """Mycodo daemon."""
+
     def __init__(self, debug):
         self.logger = logging.getLogger('mycodo.daemon')
         if not debug:
             self.logger.setLevel(logging.INFO)
 
-        self.logger.info("Mycodo daemon v{ver} starting".format(ver=MYCODO_VERSION))
+        self.logger.info(
+            "Mycodo daemon v{ver} starting".format(ver=MYCODO_VERSION))
 
         self.log_level_debug = debug
         self.startup_timer = timeit.default_timer()
@@ -161,7 +161,8 @@ class DaemonController:
         self.load_actions()
         self.start_all_controllers(self.debug)
         self.daemon_startup_time = timeit.default_timer() - self.startup_timer
-        self.logger.info("Mycodo daemon started in {sec:.3f} seconds".format(sec=self.daemon_startup_time))
+        self.logger.info("Mycodo daemon started in {sec:.3f} seconds".format(
+            sec=self.daemon_startup_time))
         self.startup_stats()
 
         # loop until daemon is instructed to shut down
@@ -285,7 +286,8 @@ class DaemonController:
                 controller_manage['type'] = CustomController
                 controller_manage['function'] = FunctionController
             else:
-                message = "'{type}' not a valid controller type.".format(type=cont_type)
+                message = "'{type}' not a valid controller type.".format(
+                    type=cont_type)
                 self.logger.error(message)
                 return 1, message
 
@@ -301,11 +303,13 @@ class DaemonController:
                     mod_cont.is_activated = True
                     new_session.commit()
 
-            self.controller[cont_type][cont_id] = controller_manage['function'](ready, cont_id)
+            self.controller[cont_type][cont_id] = controller_manage['function'](
+                ready, cont_id)
             self.controller[cont_type][cont_id].daemon = True
             self.controller[cont_type][cont_id].start()
             ready.wait()  # wait for thread to return ready
-            message = "{type} controller with ID {id} activated.".format(type=cont_type, id=cont_id)
+            message = "{type} controller with ID {id} activated.".format(
+                type=cont_type, id=cont_id)
             self.logger.debug(message)
             return 0, message
 
@@ -345,7 +349,8 @@ class DaemonController:
                         elif cont_type == 'Function':
                             controller_table = CustomController
                         else:
-                            message = "'{type}' not a valid controller type.".format(type=cont_type)
+                            message = "'{type}' not a valid controller type.".format(
+                                type=cont_type)
                             self.logger.error(message)
                             return 1, message
 
@@ -364,9 +369,11 @@ class DaemonController:
                                     new_session.commit()
 
                         if cont_type == 'PID':
-                            self.controller[cont_type][cont_id].stop_controller(deactivate_pid=True)
+                            self.controller[cont_type][cont_id].stop_controller(
+                                deactivate_pid=True)
                         else:
-                            self.controller[cont_type][cont_id].stop_controller()
+                            self.controller[cont_type][cont_id].stop_controller(
+                            )
                         self.controller[cont_type][cont_id].join()
 
                         message = "{type} controller with ID {id} deactivated.".format(
@@ -390,7 +397,8 @@ class DaemonController:
                     self.logger.error(message)
                     return 1, message
             else:
-                message = "{type} controller with ID {id} not found".format(type=cont_type, id=cont_id)
+                message = "{type} controller with ID {id} not found".format(
+                    type=cont_type, id=cont_id)
                 self.logger.error(message)
                 return 1, message
 
@@ -421,7 +429,8 @@ class DaemonController:
                     self.logger.debug(message)
                     return False
             else:
-                message = "{type} controller with ID {id} not found".format(type=cont_type, id=cont_id)
+                message = "{type} controller with ID {id} not found".format(
+                    type=cont_type, id=cont_id)
                 self.logger.debug(message)
                 return False
         except Exception as except_msg:
@@ -458,7 +467,8 @@ class DaemonController:
             if not self.controller['Widget'].is_running():
                 return "Error: Widget controller"
         except Exception as except_msg:
-            message = "Could not check running threads: {e}".format(e=except_msg)
+            message = "Could not check running threads: {e}".format(
+                e=except_msg)
             self.logger.exception(message)
             return "Exception: {msg}".format(msg=except_msg)
 
@@ -514,7 +524,8 @@ class DaemonController:
         try:
             return self.controller['Input'][input_id].force_measurements()
         except Exception as except_msg:
-            message = "Cannot force acquisition of Input measurements: {err}".format(err=except_msg)
+            message = "Cannot force acquisition of Input measurements: {err}".format(
+                err=except_msg)
             self.logger.exception(message)
             return 1, message
 
@@ -630,7 +641,8 @@ class DaemonController:
             self.logger.error(message)
             return 0, message
         except Exception as except_msg:
-            message = "Cannot flash LCD ({state}): {e}".format(state=state, e=except_msg)
+            message = "Cannot flash LCD ({state}): {e}".format(
+                state=state, e=except_msg)
             self.logger.exception(message)
             return 0, message
 
@@ -720,7 +732,8 @@ class DaemonController:
             elif setting == 'kd':
                 return self.controller['PID'][pid_id].set_kd(value)
         except Exception as except_msg:
-            message = "Could not set PID {opt}: {e}".format(opt=setting, e=except_msg)
+            message = "Could not set PID {opt}: {e}".format(
+                opt=setting, e=except_msg)
             self.logger.exception(message)
 
     def refresh_daemon_camera_settings(self):
@@ -729,14 +742,16 @@ class DaemonController:
             self.camera = db_retrieve_table_daemon(Camera, entry='all')
         except Exception as except_msg:
             self.camera = []
-            message = "Could not read camera table: {err}".format(err=except_msg)
+            message = "Could not read camera table: {err}".format(
+                err=except_msg)
             self.logger.exception(message)
 
     def refresh_daemon_conditional_settings(self, unique_id):
         try:
             return self.controller['Conditional'][unique_id].refresh_settings()
         except Exception as except_msg:
-            message = "Could not refresh conditional settings: {e}".format(e=except_msg)
+            message = "Could not refresh conditional settings: {e}".format(
+                e=except_msg)
             self.logger.exception(message)
 
     def refresh_daemon_misc_settings(self):
@@ -761,14 +776,16 @@ class DaemonController:
                 self.logger.debug("Generating next output usage report {time_date}".format(
                     time_date=str_next_report))
         except Exception as except_msg:
-            message = "Could not refresh misc settings: {e}".format(e=except_msg)
+            message = "Could not refresh misc settings: {e}".format(
+                e=except_msg)
             self.logger.exception(message)
 
     def refresh_daemon_trigger_settings(self, unique_id):
         try:
             return self.controller['Trigger'][unique_id].refresh_settings()
         except Exception as except_msg:
-            message = "Could not refresh trigger settings: {e}".format(e=except_msg)
+            message = "Could not refresh trigger settings: {e}".format(
+                e=except_msg)
             self.logger.exception(message)
 
     def output_off(self, output_id, output_channel=None, trigger_conditionals=True):
@@ -882,11 +899,14 @@ class DaemonController:
         try:
             # if statistics file doesn't exist, create it
             if not os.path.isfile(STATS_CSV):
-                self.logger.debug("Statistics file doesn't exist, creating {file}".format(file=STATS_CSV))
+                self.logger.debug(
+                    "Statistics file doesn't exist, creating {file}".format(file=STATS_CSV))
                 recreate_stat_file()
-            add_update_csv(STATS_CSV, 'daemon_startup_seconds', self.daemon_startup_time)
+            add_update_csv(STATS_CSV, 'daemon_startup_seconds',
+                           self.daemon_startup_time)
         except Exception as msg:
-            self.logger.exception("Statistics initialization Error: {e}".format(e=msg))
+            self.logger.exception(
+                "Statistics initialization Error: {e}".format(e=msg))
 
     def load_actions(self):
         self.actions = parse_action_information()
@@ -928,11 +948,13 @@ class DaemonController:
             self.logger.debug("Output Controller fully started")
 
             for each_controller in self.cont_types:
-                self.logger.debug("Starting all activated {type} controllers".format(type=each_controller))
+                self.logger.debug(
+                    "Starting all activated {type} controllers".format(type=each_controller))
                 for each_entry in db_tables[each_controller]:
                     if each_entry.is_activated:
                         self.controller_activate(each_entry.unique_id)
-                self.logger.info("All activated {type} controllers started".format(type=each_controller))
+                self.logger.info(
+                    "All activated {type} controllers started".format(type=each_controller))
 
             self.logger.debug("Starting Widget Controller")
             ready = threading.Event()
@@ -954,7 +976,8 @@ class DaemonController:
             time.sleep(0.5)
 
         except Exception as except_msg:
-            message = "Could not start all controllers: {err}".format(err=except_msg)
+            message = "Could not start all controllers: {err}".format(
+                err=except_msg)
             self.logger.exception(message)
 
     def stop_all_controllers(self):
@@ -968,7 +991,8 @@ class DaemonController:
             for cont_id in self.controller[each_controller]:
                 try:
                     if self.controller[each_controller][cont_id].is_running():
-                        self.controller[each_controller][cont_id].stop_controller()
+                        self.controller[each_controller][cont_id].stop_controller(
+                        )
                         controller_running[each_controller].append(cont_id)
                 except Exception as err:
                     self.logger.info("{type} controller {id} thread had an issue stopping: {err}".format(
@@ -981,19 +1005,24 @@ class DaemonController:
                 except Exception as err:
                     self.logger.info("{type} controller {id} thread had an issue being joined: {err}".format(
                         type=each_controller, id=cont_id, err=err))
-            self.logger.info("All {type} controllers stopped".format(type=each_controller))
+            self.logger.info(
+                "All {type} controllers stopped".format(type=each_controller))
 
         try:
             self.controller['Output'].stop_controller()
-            self.controller['Output'].join(15)  # Give each thread 15 seconds to stop
+            # Give each thread 15 seconds to stop
+            self.controller['Output'].join(15)
         except Exception as err:
-            self.logger.info("Output controller had an issue stopping: {err}".format(err=err))
+            self.logger.info(
+                "Output controller had an issue stopping: {err}".format(err=err))
 
         try:
             self.controller['Widget'].stop_controller()
-            self.controller['Widget'].join(15)  # Give each thread 15 seconds to stop
+            # Give each thread 15 seconds to stop
+            self.controller['Widget'].join(15)
         except Exception as err:
-            self.logger.info("Widget controller had an issue stopping: {err}".format(err=err))
+            self.logger.info(
+                "Widget controller had an issue stopping: {err}".format(err=err))
 
     def trigger_action(self, action_id, value=None, message='', debug=False):
         try:
@@ -1004,7 +1033,8 @@ class DaemonController:
                 message=message,
                 debug=debug)
         except Exception as except_msg:
-            message = "Could not trigger Conditional Actions: {err}".format(err=except_msg)
+            message = "Could not trigger Conditional Actions: {err}".format(
+                err=except_msg)
             self.logger.exception(message)
 
     def trigger_all_actions(self, function_id, message='', debug=False):
@@ -1012,7 +1042,8 @@ class DaemonController:
             return trigger_controller_actions(
                 self.actions, function_id, message=message, debug=debug)
         except Exception as except_msg:
-            message = "Could not trigger Conditional Actions: {err}".format(err=except_msg)
+            message = "Could not trigger Conditional Actions: {err}".format(
+                err=except_msg)
             self.logger.exception(message)
             return message
 
@@ -1031,7 +1062,8 @@ class DaemonController:
 
     def log_ram_usage(self):
         try:
-            ram_mb = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / float(1000)
+            ram_mb = resource.getrusage(
+                resource.RUSAGE_SELF).ru_maxrss / float(1000)
             self.logger.info("{ram:.2f} MB RAM in use".format(ram=ram_mb))
         except Exception:
             self.logger.exception("Free Ram ERROR")
@@ -1092,7 +1124,8 @@ class DaemonController:
                     mod_camera.timelapse_capture_number = None
                     new_session.commit()
                 self.refresh_daemon_camera_settings()
-                self.logger.debug("Camera {id}: End of time-lapse.".format(id=camera.id))
+                self.logger.debug(
+                    "Camera {id}: End of time-lapse.".format(id=camera.id))
             elif ((camera.timelapse_started and not camera.timelapse_paused) and
                     now > camera.timelapse_next_capture):
                 # Ensure next capture is greater than now (in case of power failure/reboot)
@@ -1103,16 +1136,19 @@ class DaemonController:
                     next_capture += camera.timelapse_interval
                     capture_number += 1
                 with session_scope(MYCODO_DB_PATH) as new_session:
-                    mod_camera = new_session.query(Camera).filter(Camera.unique_id == camera.unique_id).first()
+                    mod_camera = new_session.query(Camera).filter(
+                        Camera.unique_id == camera.unique_id).first()
                     mod_camera.timelapse_next_capture = next_capture
                     mod_camera.timelapse_capture_number = capture_number
                     new_session.commit()
                 self.refresh_daemon_camera_settings()
-                self.logger.debug("Camera {id}: Capturing time-lapse image".format(id=camera.id))
+                self.logger.debug(
+                    "Camera {id}: Capturing time-lapse image".format(id=camera.id))
                 # Capture image
                 camera_record('timelapse', camera.unique_id)
         except Exception as except_msg:
-            message = "Could not execute timelapse: {err}".format(err=except_msg)
+            message = "Could not execute timelapse: {err}".format(
+                err=except_msg)
             self.logger.exception(message)
 
     def send_stats(self):
@@ -1121,7 +1157,8 @@ class DaemonController:
         try:
             return_stat_file_dict(STATS_CSV)
         except Exception as except_msg:
-            self.logger.exception("Error reading stats file: {err}".format(err=except_msg))
+            self.logger.exception(
+                "Error reading stats file: {err}".format(err=except_msg))
             try:
                 os.remove(STATS_CSV)
             except OSError:
@@ -1132,7 +1169,8 @@ class DaemonController:
         try:
             send_anonymous_stats(self.start_time, self.log_level_debug)
         except Exception as except_msg:
-            self.logger.exception("Could not send statistics: {err}".format(err=except_msg))
+            self.logger.exception(
+                "Could not send statistics: {err}".format(err=except_msg))
 
 
 @expose
@@ -1140,6 +1178,7 @@ class PyroServer(object):
     """
     Pyro for communicating between the client and the daemon
     """
+
     def __init__(self, mycodo):
         self.mycodo = mycodo
 
@@ -1331,6 +1370,7 @@ class PyroDaemon(threading.Thread):
     user) to communicate with the daemon (mycodo_daemon.py running with root privileges).
 
     """
+
     def __init__(self, mycodo, debug):
         threading.Thread.__init__(self)
 
@@ -1356,6 +1396,7 @@ class PyroMonitor(threading.Thread):
     Monitor whether the Pyro5 server (and daemon) is active or not
 
     """
+
     def __init__(self, debug):
         threading.Thread.__init__(self)
 
@@ -1368,7 +1409,8 @@ class PyroMonitor(threading.Thread):
 
     def run(self):
         try:
-            self.logger.info("Starting Pyro5 daemon monitor ({:.0f} min timer)".format(self.timer_sec / 60.0))
+            self.logger.info("Starting Pyro5 daemon monitor ({:.0f} min timer)".format(
+                self.timer_sec / 60.0))
             log_timer = time.time() + 1
             while True:
                 now = time.time()
@@ -1381,7 +1423,8 @@ class PyroMonitor(threading.Thread):
                         self.logger.debug("Pyro5 daemon monitor: daemon_status() response: '{stat}'".format(
                             stat=proxy.daemon_status()))
                     except Exception as err:
-                        self.logger.exception("Pyro5 daemon monitor Exception: {msg}".format(msg=err))
+                        self.logger.exception(
+                            "Pyro5 daemon monitor Exception: {msg}".format(msg=err))
                 time.sleep(1)
         except Exception as err:
             self.logger.exception("ERROR: PyroMonitor: {msg}".format(msg=err))
@@ -1391,6 +1434,7 @@ class MycodoDaemon:
     """
     Handle starting the components of the Mycodo Daemon
     """
+
     def __init__(self, mycodo, debug):
         self.logger = logging.getLogger('mycodo.daemon')
         if not debug:
@@ -1426,8 +1470,8 @@ def parse_args():
 
 if __name__ == '__main__':
     # Check for root privileges
-    if not os.geteuid() == 0:
-        sys.exit("Script must be executed as root")
+    # if not os.geteuid() == 0:
+    #     sys.exit("Script must be executed as root")
 
     # Check if lock file already exists
     # if os.path.isfile(DAEMON_PID_FILE):
@@ -1444,7 +1488,8 @@ if __name__ == '__main__':
     logger.propagate = False
     fh = logging.FileHandler(DAEMON_LOG_FILE, 'a')
     fh.setLevel(logging.DEBUG)
-    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(name)s - %(message)s")
+    formatter = logging.Formatter(
+        "%(asctime)s - %(levelname)s - %(name)s - %(message)s")
     fh.setFormatter(formatter)
     logger.addHandler(fh)
     keep_fds = [fh.stream.fileno()]

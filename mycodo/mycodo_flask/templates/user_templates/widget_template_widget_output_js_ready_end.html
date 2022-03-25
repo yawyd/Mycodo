@@ -1,0 +1,39 @@
+
+{%- set device_id = "" -%}
+{%- set channel_id = "" -%}
+{%- set out = none -%}
+{%- set out_chan = none -%}
+{%- set measurements = [] -%}
+{%- set channel_output = [] -%}
+
+{%- if widget_options['output'] and "," in widget_options['output'] -%}
+    {%- set device_id = widget_options['output'].split(",")[0] -%}
+    {%- set channel_id = widget_options['output'].split(",")[1] -%}
+{%- endif -%}
+
+{%- if device_id and channel_id -%}
+    {% set out = table_output.query.filter(table_output.unique_id == device_id).first() %}
+    {% set out_chan = table_output_channel.query.filter(table_output_channel.unique_id == channel_id).first() %}
+{%- endif -%}
+
+{%- if out and out_chan and 
+       out.output_type and out_chan.channel is not none and
+       out.output_type in dict_outputs and
+       "channels_dict" in dict_outputs[out.output_type] and
+       out_chan.channel in dict_outputs[out.output_type]["channels_dict"] -%}
+    {%- set channel_output = dict_outputs[out.output_type]["channels_dict"][out_chan.channel] -%}
+    {%- if "measurements" in channel_output and channel_output["measurements"] -%}
+        {% set measurements = table_device_measurements.query.filter(
+                                and_(table_device_measurements.device_id == device_id,
+                                     table_device_measurements.channel.in_(channel_output["measurements"]))).all() %}
+    {%- endif -%}
+{%- endif -%}
+
+{% for each_measure in measurements %}
+  getLastDataOutput('{{each_widget.unique_id}}', '{{device_id}}', 'output', '{{each_measure.unique_id}}', {{widget_options['max_measure_age']}}, {{widget_options['decimal_places']}});
+  repeatLastDataOutput('{{each_widget.unique_id}}', '{{device_id}}', 'output', '{{each_measure.unique_id}}', {{widget_options['refresh_seconds']}}, {{widget_options['max_measure_age']}}, {{widget_options['decimal_places']}});
+{% endfor %}
+{% if device_id and channel_id %}
+  getGPIOStateOutput('{{each_widget.unique_id}}', '{{device_id}}', '{{channel_id}}', {{widget_options['decimal_places']}});
+  repeatGPIOStateOutput('{{each_widget.unique_id}}', '{{device_id}}', '{{channel_id}}', {{widget_options['refresh_seconds']}}, {{widget_options['decimal_places']}});
+{% endif %}

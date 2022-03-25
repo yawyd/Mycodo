@@ -44,7 +44,7 @@ Publish "on" or "off" (or any other strings of your choosing) to an MQTT server.
 ##### Client ID
 
 - Type: Text
-- Default Value: mycodo_mqtt_client
+- Default Value: client_0B04d7Yb
 - Description: Unique client ID for connecting to the MQTT server
 
 ##### On Payload
@@ -137,7 +137,7 @@ Publish a value to an MQTT server.
 ##### Client ID
 
 - Type: Text
-- Default Value: mycodo_mqtt_client
+- Default Value: client_i42yCanH
 - Description: Unique client ID for connecting to the MQTT server
 
 ##### Off Value
@@ -257,7 +257,7 @@ The DS3502 can generate a 0 - 10k Ohm resistance with 7-bit precision. This equa
 - Manufacturer: MICROCHIP
 - Interfaces: I<sup>2</sup>C
 - Output Types: Value
-- Dependencies: [pyusb](https://pypi.org/project/pyusb), [adafruit-extended-bus](https://pypi.org/project/adafruit-extended-bus), [adafruit-circuitpython-mcp4728](https://pypi.org/project/adafruit-circuitpython-mcp4728)
+- Dependencies: [pyusb](https://pypi.org/project/pyusb), [Adafruit-extended-bus](https://pypi.org/project/Adafruit-extended-bus), [adafruit-circuitpython-mcp4728](https://pypi.org/project/adafruit-circuitpython-mcp4728)
 - Manufacturer URL: [Link](https://www.microchip.com/wwwproducts/en/en541737)
 - Datasheet URL: [Link](https://ww1.microchip.com/downloads/en/DeviceDoc/22187E.pdf)
 - Product URL: [Link](https://www.adafruit.com/product/4470)
@@ -374,8 +374,6 @@ The specified GPIO pin will be set HIGH (3.3 volts) or LOW (0 volts) when turned
 
 See the PWM section of the manual for PWM information and determining which pins may be used for each library option.
 
-#### Options
-
 #### Channel Options
 
 ##### GPIO Pin (BCM)
@@ -435,6 +433,18 @@ See the PWM section of the manual for PWM information and determining which pins
 - Type: Decimal
 - Description: The current draw of the device being controlled
 
+#### Commands
+
+##### Set the Duty Cycle.
+
+##### Duty Cycle
+
+- Type: Decimal
+- Description: The duty cycle to set
+
+##### Set Duty Cycle
+
+- Type: Button
 ### Grove I2C Motor Driver (Board v1.3) (Test Module 01)
 
 - Manufacturer: Grove
@@ -549,7 +559,7 @@ Controls the Grove I2C Motor Driver Board (v1.3). Both motors will turn at the s
 - Default Value: 1.0
 - Description: The minimum duration (seconds) the pump turns on for every 60 second period (only used for Specify Flow Rate mode).
 
-#### Actions
+#### Commands
 
 ##### New I2C Address
 
@@ -618,12 +628,69 @@ Controls the 4 or 8 channel Grove multichannel relay board.
 - Type: Decimal
 - Description: The current draw of the device being controlled
 
+### HS300 Kasa Smart WiFi Power Strip
+
+- Manufacturer: TP-Link
+- Interfaces: Mycodo
+- Output Types: On/Off
+- Dependencies: [python-kasa](https://pypi.org/project/python-kasa)
+- Manufacturer URL: [Link](https://www.kasasmart.com/us/products/smart-plugs/kasa-smart-wi-fi-power-strip-hs300)
+
+This output controls the 6 outlets of the Kasa HS300 Smart WiFi Power Strip.
+
+#### Options
+
+##### Host
+
+- Type: Text
+- Default Value: 192.168.0.50
+- Description: Host address or IP
+
+##### Status Update (Sec)
+
+- Type: Integer
+- Default Value: 60
+- Description: The period (seconds) between checking if connected and output states.
+
+#### Channel Options
+
+##### Name
+
+- Type: Text
+- Default Value: Outlet Name
+- Description: A name to distinguish this from others
+
+##### Startup State
+
+- Type: Select
+- Description: Set the state when Mycodo starts
+
+##### Shutdown State
+
+- Type: Select
+- Description: Set the state when Mycodo shuts down
+
+##### Trigger Functions at Startup
+
+- Type: Boolean
+- Description: Whether to trigger functions when the output switches at startup
+
+##### Force Command
+
+- Type: Boolean
+- Description: Always send the command if instructed, regardless of the current state
+
+##### Current (Amps)
+
+- Type: Decimal
+- Description: The current draw of the device being controlled
+
 ### I/O Expander: MCP23017 (16 Channels): On/Off
 
 - Manufacturer: MICROCHIP
 - Interfaces: I<sup>2</sup>C
 - Output Types: On/Off
-- Dependencies: [pyusb](https://pypi.org/project/pyusb), [adafruit-extended-bus](https://pypi.org/project/adafruit-extended-bus), [adafruit-circuitpython-mcp230xx](https://pypi.org/project/adafruit-circuitpython-mcp230xx)
+- Dependencies: [pyusb](https://pypi.org/project/pyusb), [Adafruit-extended-bus](https://pypi.org/project/Adafruit-extended-bus), [adafruit-circuitpython-mcp230xx](https://pypi.org/project/adafruit-circuitpython-mcp230xx)
 - Manufacturer URL: [Link](https://www.microchip.com/wwwproducts/en/MCP23017)
 - Datasheet URL: [Link](https://ww1.microchip.com/downloads/en/devicedoc/20001952c.pdf)
 - Product URL: [Link](https://www.amazon.com/Waveshare-MCP23017-Expansion-Interface-Expands/dp/B07P2H1NZG)
@@ -742,16 +809,6 @@ Controls the 8 channels of the PCF8574.
 - Manufacturer URL: [Link](https://www.tp-link.com/au/home-networking/smart-plug/kp303/)
 
 This output controls the 3 outlets of the Kasa KP303 Smart WiFi Power Strip.
-
-### HS300 Kasa Smart WiFi Power Strip
-
-- Manufacturer: TP-Link
-- Interfaces: Mycodo
-- Output Types: On/Off
-- Dependencies: [python-kasa](https://pypi.org/project/python-kasa)
-- Manufacturer URL: [Link](https://www.kasasmart.com/us/products/smart-plugs/kasa-smart-wi-fi-power-strip-hs300)
-
-This output controls the 6 outlets of the Kasa HS300 Smart WiFi Power Strip.
 
 #### Options
 
@@ -931,7 +988,7 @@ Atlas Scientific peristaltic pumps can be set to dispense at their maximum rate 
 - Type: Decimal
 - Description: The current draw of the device being controlled
 
-#### Actions
+#### Commands
 
 ##### Calibration: a calibration can be performed to increase the accuracy of the pump. It's a good idea to clear the calibration before calibrating. First, remove all air from the line by pumping the fluid you would like to calibrate to through the pump hose. Next, press Dispense Amount and the pump will be instructed to dispense 10 ml (unless you changed the default value). Measure how much fluid was actually dispensed, enter this value in the Actual Volume Dispensed (ml) field, and press Calibrate to Dispensed Amount. Now any further pump volumes dispensed should be accurate.
 
@@ -1020,64 +1077,19 @@ This output turns a GPIO pin HIGH and LOW to control power to a generic peristal
 - Type: Decimal
 - Description: The current draw of the device being controlled
 
-### Python Code: On/Off
-
-- Interfaces: Python
-- Output Types: On/Off
-
-Python 3 code will be executed when this output is turned on or off.
-
-#### Options
-
-#### Channel Options
-
-##### On Command
-
-- Description: Python code to execute when the output is instructed to turn on
-
-##### Off Command
-
-- Description: Python code to execute when the output is instructed to turn off
-
-##### Startup State
-
-- Type: Select
-- Description: Set the state when Mycodo starts
-
-##### Shutdown State
-
-- Type: Select
-- Description: Set the state when Mycodo shuts down
-
-##### Trigger Functions at Startup
-
-- Type: Boolean
-- Description: Whether to trigger functions when the output switches at startup
-
-##### Force Command
-
-- Type: Boolean
-- Description: Always send the command if instructed, regardless of the current state
-
-##### Current (Amps)
-
-- Type: Decimal
-- Description: The current draw of the device being controlled
-
-### Python Code: PWM
+### Python 3 Code: PWM
 
 - Interfaces: Python
 - Output Types: PWM
+- Dependencies: [pylint](https://pypi.org/project/pylint)
 
 Python 3 code will be executed when this output is turned on or off. The "duty_cycle" object is a float value that represents the duty cycle that has been set.
 
-#### Options
-
 #### Channel Options
 
-##### Bash Command
+##### Python 3 Code
 
-- Description: Command to execute to set the PWM duty cycle (%)
+- Description: Python code to execute to set the PWM duty cycle (%)
 
 ##### User
 
@@ -1114,6 +1126,63 @@ Python 3 code will be executed when this output is turned on or off. The "duty_c
 
 - Type: Boolean
 - Description: Invert the value that is saved to the measurement database
+
+##### Trigger Functions at Startup
+
+- Type: Boolean
+- Description: Whether to trigger functions when the output switches at startup
+
+##### Force Command
+
+- Type: Boolean
+- Description: Always send the command if instructed, regardless of the current state
+
+##### Current (Amps)
+
+- Type: Decimal
+- Description: The current draw of the device being controlled
+
+#### Commands
+
+##### Set the Duty Cycle.
+
+##### Duty Cycle
+
+- Type: Decimal
+- Description: The duty cycle to set
+
+##### Set Duty Cycle
+
+- Type: Button
+### Python Code: On/Off
+
+- Interfaces: Python
+- Output Types: On/Off
+- Dependencies: [pylint](https://pypi.org/project/pylint)
+
+Python 3 code will be executed when this output is turned on or off.
+
+#### Options
+
+#### Channel Options
+
+##### On Command
+
+- Description: Python code to execute when the output is instructed to turn on
+
+##### Off Command
+
+- Description: Python code to execute when the output is instructed to turn off
+
+##### Startup State
+
+- Type: Select
+- Description: Set the state when Mycodo starts
+
+##### Shutdown State
+
+- Type: Select
+- Description: Set the state when Mycodo shuts down
 
 ##### Trigger Functions at Startup
 
