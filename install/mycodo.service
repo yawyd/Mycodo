@@ -14,8 +14,8 @@ Environment="PYTHONPATH=/home/yawyd/crossthink/Mycodo:${PYTHONPATH}"
 TimeoutSec=0
 #ExecStartPre=/bin/bash /home/yawyd/crossthink/Mycodo/install/influxdb_wait_until_running.sh
 ExecStart=/home/yawyd/crossthink/Mycodo/env/bin/python /home/yawyd/crossthink/Mycodo/mycodo/mycodo_daemon.py
-ExecStop=/home/yawyd/crossthink/Mycodo/env/bin/python /home/yawyd/crossinkgthink/Mycodo/mycodo/mycodo_client.py -t
-ExecReload=/home/yawyd/crossthink/Mycodo/env/bin/python /var/mycodo-root/mycodo/mycodo_client.py -t && /home/yawyd/crossthink/Mycodo/env/bin/python /home/yawyd/crossthink/Mycodo/mycodo/mycodo_daemon.py
+ExecStop=/home/yawyd/crossthink/Mycodo/env/bin/python /home/yawyd/crossthink/Mycodo/mycodo/mycodo_client.py -t
+ExecReload=/home/yawyd/crossthink/Mycodo/env/bin/python /home/yawyd/crossthink/Mycodo/mycodo/mycodo_client.py -t && /home/yawyd/crossthink/Mycodo/env/bin/python /home/yawyd/crossthink/Mycodo/mycodo/mycodo_daemon.py
 
 [Install]
 WantedBy=multi-user.target

@@ -26,21 +26,31 @@ def constraints_pass_measure_range(mod_input, value):
 # Measurements
 measurements_dict = {
     0: {
-        'measurement': 'duration_time',
-        'unit': 's'
+        'measurement': 'volume',
+        'unit': 'ml',
+        'name': 'Dispense Volume',
+    },
+}
+
+channels_dict = {
+    0: {
+        'types': ['volume'],
+        'measurements': [0]
     }
 }
 
 # Output information
 OUTPUT_INFORMATION = {
     # A unique output name used to distinguish it from others
-    'output_name_unique': 'example_output_dummy',
+    'output_name_unique': 'klipper_temp_bed',
 
     # A friendly/common name for the output to display to the user
-    'output_name': 'Example Dummy Output',
+    'output_name': 'Klipper Bed Temp',
 
     # Optional library name (for outputs that are named the same but use different libraries)
-    'output_library': '',
+    'output_library': 'library_name',
+
+    'channels_dict': channels_dict,
 
     # The dictionary of measurements for this output. Don't edit this.
     'measurements_dict': measurements_dict,
@@ -49,16 +59,18 @@ OUTPUT_INFORMATION = {
     'output_types': ['volume'],
 
     # A message to display at the top of the output options
-    'message': 'Information about this output.',
+    'message': 'set temperature for klipper bed',
 
     # Form input options that are enabled or disabled
     'options_enabled': [
         # 'gpio_pin',           # Enables an input field to set a GPIO pin
         # 'current_draw',       # Enables an input field to set the Amp-draw
-        'button_on',          # Shows a button to turn the output on
-        'button_send_duration'  # Shows an input field and an button to turn on for a duration
+        'button_on',  # Shows a button to turn the output on
+        'button_send_volume',
+        # 'button_send_duration'  # Shows an input field and an button to turn on for a duration
     ],
     'options_disabled': [
+        # 'measurements_dict',
         'interface'  # Show the interface (as a disabled input)
     ],
 
@@ -66,34 +78,34 @@ OUTPUT_INFORMATION = {
     'dependencies_module': [],
 
     # A message to be displayed on the dependency install page
-    'dependencies_message': 'Are you sure you want to install these dependencies? They require...',
+    'dependencies_message': 'no dep',
 
     # The interface or interfaces that can be used with this module
     # A custom interface can be used.
     # Options: SHELL, PYTHON, GPIO, I2C, FTDI, UART
-    'interfaces': ['PYTHON'],
+    'interfaces': [],
 
     # Custom actions that will appear at the top of the options in the user interface.
     # Buttons are required to have a function with the same name that will be executed
     # when the button is pressed. Input values will be passed to the button in a
     # dictionary. See the function input_button() at the end of this module.
-    'custom_commands_message': 'This is a message displayed for custom actions.',
-    'custom_commands': [
-        {
-            'id': 'climate_bed_temp',
-            'type': 'float',
-            'name': 'temperature',
-            'phrase': 'temp of climate bed'
-        }
-        # {
-        #     'id': 'input_button',
-        #     'type': 'button',
-        #     'name': 'Button Name'
-        # }
-    ],
+    # 'custom_commands_message': 'This is a message displayed for custom actions.',
+    # 'custom_commands': [
+    #     {
+    #         'id': 'input_value',
+    #         'type': 'float',
+    #         'name': 'Value Name',
+    #         'phrase': 'A description for this input'
+    #     },
+    #     {
+    #         'id': 'input_button',
+    #         'type': 'button',
+    #         'name': 'Button Name'
+    #     }
+    # ],
 
     # Custom options that can be set by the user in the web interface.
-    'custom_options_message': 'This is a message displayed for custom options.',
+    # 'custom_options_message': 'This is a message displayed for custom options.',
     'custom_options': [
         {
             'id': 'bool_value',
@@ -130,6 +142,7 @@ OUTPUT_INFORMATION = {
 
 class OutputModule(AbstractOutput):
     """An output support class that operates an output."""
+
     def __init__(self, output, testing=False):
         super().__init__(output, testing=testing, name=__name__)
 
@@ -169,7 +182,7 @@ class OutputModule(AbstractOutput):
         Set the output on, off, to an amount, or to a duty cycle
         output_type can be None, 'sec', 'vol', or 'pwm', and determines the amount's unit
         """
-        print('temp amount {}'.format(amount))
+        self.logger.info('output_switch: {}, {}'.format(amount, duty_cycle))
         if state == 'on':
             self.logger.info("Output turned on")
             self.output_states[output_channel] = True

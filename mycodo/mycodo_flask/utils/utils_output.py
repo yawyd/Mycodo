@@ -75,9 +75,9 @@ def output_add(form_add, request_form):
                     new_output.i2c_bus = 0
                 else:
                     new_output.i2c_bus = 1
-            except:
+            except Exception as e:
                 logger.error(
-                    "RPi.GPIO and Raspberry Pi required for this action")
+                    "RPi.GPIO and Raspberry Pi required for this action: {}".format(e))
 
             new_output.name = "Name"
             new_output.interface = output_interface
