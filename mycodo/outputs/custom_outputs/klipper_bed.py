@@ -23,18 +23,16 @@ def constraints_pass_measure_range(mod_input, value):
     return all_passed, errors, mod_input
 
 
-# Measurements
 measurements_dict = {
     0: {
-        'measurement': 'volume',
-        'unit': 'ml',
-        'name': 'Dispense Volume',
-    },
+        'measurement': 'duty_cycle',
+        'unit': 'percent'
+    }
 }
 
 channels_dict = {
     0: {
-        'types': ['volume'],
+        'types': ['pwm'],
         'measurements': [0]
     }
 }
@@ -56,7 +54,7 @@ OUTPUT_INFORMATION = {
     'measurements_dict': measurements_dict,
 
     # Type of output. Options: "on_off", "pwm", "volume"
-    'output_types': ['volume'],
+    'output_types': ['pwm'],
 
     # A message to display at the top of the output options
     'message': 'set temperature for klipper bed',
